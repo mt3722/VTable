@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>回向表單 20250509v02</title>
+  <style>
+    @font-face {
+      font-family: '文鼎中特標宋注音';
+      src: url('https://cdn.jsdelivr.net/gh/mt3722/TableMaker/StdMingZuinnEG-Eb.woff2?v=20250506-30') format('woff2'),
+           url('https://cdn.jsdelivr.net/gh/mt3722/TableMaker/StdMingZuinnEG-Eb.woff?v=20250506-30') format('woff'),
+           url('https://cdn.jsdelivr.net/gh/mt3722/TableMaker/文鼎中特標宋注音.ttc?v=20250506-30') format('truetype');
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: '文鼎中特標準宋體';
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* 設置標題文字的位置與字體大小 */
+    h1 {
+      position: absolute;
+      top: 10px; /* 標題距離表格框線上方 5cm */
+      left: 0cm; /* 標題距離左邊 3.4cm */
+      right: 0;
+      font-size: 28px; /* 增加字體大小 */
+      font-family: '文鼎中特標準宋體';
+      font-weight: normal; /* 去除粗體 */
+      text-align: center;
+      letter-spacing: 1px;
+      margin-left: 0; /* 確保圖片與文字不重疊 */
+    }
+
+    /* 圖片設置，尺寸縮小至 4% */
+    .logo {
+      position: absolute;
+      top: 32px; /* 與標題相同的頂部距離 */
+      left: 7cm; /* 標題左側 2cm */
+      width: 4%; /* 圖片縮小到4% */
+      height: auto;
+    }
+
+    /* 日期顯示區域 */
+    .date-label {
+      position: absolute;
+      top: 1.3cm; /* 距離表格框線上方2cm */
+      right: 1.5cm; /* 距離頁面右側 10cm */
+      font-size: 12px; /* 設置字體大小 */
+      font-family: '文鼎中特標準宋體';
+      letter-spacing: 1px;
+    }
+
+    /* 設置底部文字的位置與字體大小 */
+    .footer {
+      position: absolute;
+      bottom: 0cm; /* 底部文字距離表格框線下方 0cm */
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 24px; /* 增加字體大小 */
+      letter-spacing: 2px;
+    }
+
+    .table-container {
+      width: 18cm; /* 調整寬度 */
+      height: 25cm; /* 調整高度 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    table {
+      table-layout: fixed;
+      width: 100%;
+      height: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    th, td {
+      width: 4.5cm; /* 調整欄位寬度 */
+      padding: 0;
+      text-align: center;
+      vertical-align: middle;
+      border: 0.5px solid #000;
+    }
+
+    /* 行高設置 */
+    tr:nth-child(1) td, tr:nth-child(2) td, tr:nth-child(3) td, tr:nth-child(4) td,
+    tr:nth-child(5) td, tr:nth-child(6) td, tr:nth-child(7) td, tr:nth-child(8) td,
+    tr:nth-child(9) td, tr:nth-child(10) td, tr:nth-child(11) td, tr:nth-child(12) td,
+    tr:nth-child(13) td, tr:nth-child(14) td, tr:nth-child(15) td, tr:nth-child(16) td {
+      height: 1.45cm; /* 統一高度 */
+    }
+
+    /* 所有儲存格文字都改為橫排 */
+    td div {
+      writing-mode: horizontal-tb;
+      text-orientation: mixed;
+      letter-spacing: 0px;
+      font-size: 24px; /* 文字大小設為28 */
+      font-family: '文鼎中特標宋注音'; /* 使用文鼎中特標準宋體 */
+      text-align: center; /* 文字居中對齊 */
+      vertical-align: middle;
+      transform: translateY(-7px); /* 使文字基準線上移7px */
+    }
+
+    /* 上標的樣式 */
+    .superscript {
+      font-size: 12px;
+      vertical-align: super;
+    }
+
+    /* 隱藏的控件和表格的顯示控制 */
+    .controls {
+      position: absolute;
+      top: 1.0cm;
+      left: 1cm;
+      right: 1cm;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.5em;
+      border-radius: 4px;
+      z-index: 10;
+    }
+
+    .controls textarea {
+      width: 100%;
+      height: 3em;
+      font-family: inherit;
+    }
+
+    .controls button {
+      margin-top: 0.5em;
+      padding: 0.5em 1em;
+      font-family: inherit;
+    }
+
+    /* 列印樣式：隱藏不需要的元素，展開表格 */
+    @media print {
+      .controls { display: none !important; }
+      .table-wrapper { overflow: visible !important; }
+      html, body { overflow: visible !important; }
+    }
+
+  </style>
+</head>
+<body>
+  <!-- 顯示圖片 -->
+  <img src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" class="logo" alt="Logo">
+
+  <!-- 顯示日期 -->
+  <div class="date-label" id="current-date"></div>
+
+  <!-- 標題區域 -->
+  <h1>　　淨土宗竹山念佛會</h1>
+  
+  <!-- 表格控件區域 -->
+  <div class="controls">
+    <textarea id="bulk-input" placeholder="請貼上以逗號或換行分隔的資料..."></textarea>
+    <button id="bulk-load">產生表格</button>
+  </div>
+
+  <!-- 表格區域 -->
+  <div class="table-container">
+    <table>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- 底部回向文 -->
+  <p class="footer">願以此功德　平等施一切　同發菩提心　往生安樂國</p>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 顯示當天日期
+      const currentDate = new Date();
+      const formattedDate = currentDate.toLocaleDateString(); // 格式化日期
+      document.getElementById('current-date').textContent = `日期: ${formattedDate}`;
+
+      const tbody = document.getElementById('tbody');
+      const heights = Array(16).fill(1.45); // 統一16行高度
+
+      // 生成16行 × 4列
+      heights.forEach(h => {
+        const tr = document.createElement('tr');
+        tr.style.height = h + 'cm';
+        for (let c = 1; c <= 4; c++) {
+          const td = document.createElement('td');
+          const div = document.createElement('div'); // 使用 div 來顯示資料
+          td.appendChild(div);
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('bulk-load').onclick = () => {
+        // 拆分資料
+        const raw = document.getElementById('bulk-input').value;
+        const items = raw.split(/\r?\n|,/).map(v => v.trim()).filter(v => v);
+
+        // 清空所有儲存格
+        document.querySelectorAll('td div').forEach(d => d.innerHTML = '');
+
+        // 填入資料：直接填充每個資料
+        items.forEach((item, k) => {
+          const dp = k; // 填充到相應的欄位
+          const dr = Math.floor(dp / 4), dc = dp % 4;
+          const dateCell = tbody.children[dr].querySelectorAll('td div')[dc];
+
+          // 檢查每一個字元，若是非中文字符，將其設為上標
+          let modifiedItem = '';
+          for (let char of item) {
+            if (!/[\u4e00-\u9fff]/.test(char)) {
+              // 如果是非中文字符，設為上標
+              modifiedItem += `<span class="superscript">${char}</span>`;
+            } else {
+              modifiedItem += char;
+            }
+          }
+
+          dateCell.innerHTML = modifiedItem; // 填入修改後的資料
+        });
+      };
+    });
+  </script>
+</body>
+</html>
