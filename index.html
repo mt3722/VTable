@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>回向表單 20250607v03</title>
+  <title>回向表單 20250607v04</title>
   <style>
     @font-face {
       font-family: '文鼎中特標宋注音';
@@ -59,10 +59,11 @@
     .footer .three { font-size:10px; vertical-align:baseline; }
   </style>
 
-  <!-- 引入 cnchar-all 用於筆劃計算 -->
+  <!-- 引入 cnchar-all 用於上標注音（筆劃比較使用 Intl.Collator） -->
   <script src="https://cdn.jsdelivr.net/npm/cnchar-all/cnchar.all.min.js"></script>
 </head>
 <body>
+
   <div class="controls">
     <div class="input-group">
       <label for="bulk-xiaozai">消災者名單：</label>
@@ -108,7 +109,8 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 初始化表格
+
+      // 建表：首列 + 16 行空列
       function initTable(tbodyId, headerHTML) {
         const tbody = document.getElementById(tbodyId);
         let tr = document.createElement('tr'),
@@ -133,13 +135,13 @@
       initTable('tbody-xiaozai','回向消災堂上消災者，以及消災者：');
       initTable('tbody-wangsheng','再回向往生堂上眾等往生者，以及往生者：');
 
-      // 顯示日期
-      const now = new Date(),
-            minguo = `${now.getFullYear()-1911}年${now.getMonth()+1}月${now.getDate()}日`;
+      // 顯示今日民國日期
+      const now = new Date();
+      const minguo = `${now.getFullYear()-1911}年${now.getMonth()+1}月${now.getDate()}日`;
       document.getElementById('date-xiaozai').textContent = minguo;
       document.getElementById('date-wangsheng').textContent = minguo;
 
-      // 筆劃計算
+      // 保留：筆劃計算（若未來需要）
       function getStrokeCount(str) {
         let s;
         if (typeof str.stroke === 'function') {
@@ -153,64 +155,57 @@
         return typeof s==='number'? s:0;
       }
 
+      // 新增：筆劃排序比較器
+      const strokeCollator = new Intl.Collator('zh-Hant-u-co-stroke');
+
       document.getElementById('generate').onclick = () => {
+        // 當天 00:00
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
         ['xiaozai','wangsheng'].forEach(type => {
-          // 取 raw 並解析
+          // 原始文字拆行或逗號
           const raws = document.getElementById(`bulk-${type}`)
                         .value.split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean);
-          let items = raws.map(display => {
-            const m = display.match(/(\d{1,2})[\/\-](\d{1,2})/);
+
+          // 解析出 date 與 純 name（去掉日期前綴）
+          const items = raws.map(display => {
+            const m = display.match(/^(\d{1,2}[\/\-]\d{1,2})\s*(.*)$/);
             return {
               display,
-              date: m
-                ? new Date(now.getFullYear(),
-                           parseInt(m[1],10)-1,
-                           parseInt(m[2],10))
-                : null
+              name:  m ? m[2] : display,
+              date:  m
+                      ? new Date(now.getFullYear(),
+                                 parseInt(m[1].split(/\/|-/)[0],10)-1,
+                                 parseInt(m[1].split(/\/|-/)[1],10))
+                      : null
             };
-          })
-          // 過期過濾
-          .filter(x => x.date===null || x.date>=today);
-
-          // 特殊條目
-          const special = items.filter(x =>
-            x.display.startsWith('釋') || x.display.endsWith('法師')
-          );
-          const rest = items.filter(x => !special.includes(x));
-
-          // 排序 special：先有日期，再無日期；有日期內依日期→筆劃；無日期依筆劃
-          const specialDates = special.filter(x => x.date)
-            .sort((a,b) => {
-              const d = a.date - b.date;
-              return d!==0? d : getStrokeCount(a.display) - getStrokeCount(b.display);
-            });
-          const specialNoDates = special.filter(x => !x.date)
-            .sort((a,b) => getStrokeCount(a.display) - getStrokeCount(b.display));
-          const sortedSpecial = [...specialDates, ...specialNoDates];
-
-          // 排序 rest：同 original v03 邏輯
-          rest.sort((a,b) => {
-            if (a.date && b.date) {
-              const d = a.date - b.date;
-              if (d!==0) return d;
-              return getStrokeCount(a.display) - getStrokeCount(b.display);
-            }
-            if (a.date) return -1;
-            if (b.date) return 1;
-            return getStrokeCount(a.display) - getStrokeCount(b.display);
           });
 
-          const sorted = [...sortedSpecial, ...rest];
+          // 1. 特殊條目 (釋* 或 *法師)
+          const special = items.filter(x =>
+            x.name.startsWith('釋') || x.name.endsWith('法師')
+          );
+          // 2. 其餘
+          const rest = items.filter(x => !special.includes(x));
 
-          // 填回表格
+          // 3. 分別依 name 筆劃排序
+          special.sort((a,b) => strokeCollator.compare(a.name, b.name));
+          rest.sort((a,b)    => strokeCollator.compare(a.name, b.name));
+
+          // 4. 合併後再剔除過期
+          const finalList = [...special, ...rest]
+            .filter(x => x.date === null || x.date >= today);
+
+          // 填入表格
           const rows = Array.from(document.querySelectorAll(`#tbody-${type} tr`)).slice(1);
-          rows.forEach(r=>r.querySelectorAll('td div').forEach(d=>d.innerHTML=''));
-          sorted.forEach((item,i) => {
+          rows.forEach(r => r.querySelectorAll('td div').forEach(d=>d.innerHTML=''));
+          finalList.forEach((item,i) => {
             const r = Math.floor(i/4), c = i%4;
-            if (r<rows.length) {
+            if (r < rows.length) {
               const html = Array.from(item.display)
-                .map(ch=>/[\u4e00-\u9fff]/.test(ch)?ch:`<span class="superscript">${ch}</span>`)
+                .map(ch => /[\u4e00-\u9fff]/.test(ch)
+                           ? ch
+                           : `<span class="superscript">${ch}</span>`)
                 .join('');
               rows[r].querySelectorAll('td div')[c].innerHTML = html;
             }
