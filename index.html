@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>回向表單 20250509v02</title>
+  <title>回向表單 20250607v03</title>
   <style>
     @font-face {
       font-family: '文鼎中特標宋注音';
@@ -11,229 +11,210 @@
            url('https://cdn.jsdelivr.net/gh/mt3722/TableMaker/StdMingZuinnEG-Eb.woff?v=20250506-30') format('woff'),
            url('https://cdn.jsdelivr.net/gh/mt3722/TableMaker/文鼎中特標宋注音.ttc?v=20250506-30') format('truetype');
     }
-
-    @page {
-      size: A4 portrait;
-      margin: 0;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      font-family: '文鼎中特標準宋體';
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-
-    /* 設置標題文字的位置與字體大小 */
-    h1 {
-      position: absolute;
-      top: 10px; /* 標題距離表格框線上方 5cm */
-      left: 0cm; /* 標題距離左邊 3.4cm */
-      right: 0;
-      font-size: 28px; /* 增加字體大小 */
-      font-family: '文鼎中特標準宋體';
-      font-weight: normal; /* 去除粗體 */
-      text-align: center;
-      letter-spacing: 1px;
-      margin-left: 0; /* 確保圖片與文字不重疊 */
-    }
-
-    /* 圖片設置，尺寸縮小至 4% */
-    .logo {
-      position: absolute;
-      top: 38px; /* 與標題相同的頂部距離 */
-      left: 7cm; /* 標題左側 2cm */
-      width: 4%; /* 圖片縮小到4% */
-      height: auto;
-    }
-
-    /* 日期顯示區域 */
-    .date-label {
-      position: absolute;
-      top: 1.3cm; /* 距離表格框線上方2cm */
-      right: 1.5cm; /* 距離頁面右側 10cm */
-      font-size: 12px; /* 設置字體大小 */
-      font-family: '文鼎中特標準宋體';
-      letter-spacing: 1px;
-    }
-
-    /* 設置底部文字的位置與字體大小 */
-    .footer {
-      position: absolute;
-      bottom: 0cm; /* 底部文字距離表格框線下方 0cm */
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: 24px; /* 增加字體大小 */
-      letter-spacing: 2px;
-    }
-
-    .table-container {
-      width: 18cm; /* 調整寬度 */
-      height: 25cm; /* 調整高度 */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    table {
-      table-layout: fixed;
-      width: 100%;
-      height: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-
-    th, td {
-      width: 4.5cm; /* 調整欄位寬度 */
-      padding: 0;
-      text-align: center;
-      vertical-align: middle;
-      border: 0.5px solid #000;
-    }
-
-    /* 行高設置 */
-    tr:nth-child(1) td, tr:nth-child(2) td, tr:nth-child(3) td, tr:nth-child(4) td,
-    tr:nth-child(5) td, tr:nth-child(6) td, tr:nth-child(7) td, tr:nth-child(8) td,
-    tr:nth-child(9) td, tr:nth-child(10) td, tr:nth-child(11) td, tr:nth-child(12) td,
-    tr:nth-child(13) td, tr:nth-child(14) td, tr:nth-child(15) td, tr:nth-child(16) td {
-      height: 1.45cm; /* 統一高度 */
-    }
-
-    /* 所有儲存格文字都改為橫排 */
-    td div {
-      writing-mode: horizontal-tb;
-      text-orientation: mixed;
-      letter-spacing: 0px;
-      font-size: 24px; /* 文字大小設為28 */
-      font-family: '文鼎中特標宋注音'; /* 使用文鼎中特標準宋體 */
-      text-align: center; /* 文字居中對齊 */
-      vertical-align: middle;
-      transform: translateY(-0px); /* 使文字基準線上移7px */
-    }
-
-    /* 上標的樣式 */
-    .superscript {
-      font-size: 10px;
-      vertical-align: super;
-    }
-
-    /* 隱藏的控件和表格的顯示控制 */
+    @page { size: A4 portrait; margin: 0; }
+    html, body { margin:0; padding:0; width:100%; height:100%; font-family:'文鼎中特標準宋體'; }
+    body { position:relative; }
     .controls {
-      position: absolute;
-      top: 1.0cm;
-      left: 1cm;
-      right: 1cm;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 0.5em;
-      border-radius: 4px;
-      z-index: 10;
+      position:absolute; top:1cm; left:1cm; right:1cm;
+      background:rgba(255,255,255,0.9); padding:0.5em; border-radius:4px; z-index:10;
     }
-
-    .controls textarea {
-      width: 100%;
-      height: 3em;
-      font-family: inherit;
+    .input-group { margin-bottom:0.5em; }
+    .input-group label { font-size:16px; font-weight:bold; display:block; margin-bottom:0.2em; }
+    .input-group textarea { width:100%; height:4em; font-size:14px; }
+    .controls button { padding:0.5em 1em; font-size:14px; cursor:pointer; }
+    .page { width:100%; height:100%; position:relative; box-sizing:border-box; }
+    @media print { .page { page-break-after:always; } .controls { display:none!important; } }
+    .header-left { position:absolute; top:50px; left:1.5cm; display:flex; align-items:center; }
+    .header-left .logo { width:0.5cm; height:auto; margin-right:0.5em; }
+    .header-left .temple-name { font-size:16px; letter-spacing:1px; }
+    .list-title {
+      position:absolute; top:30px; left:calc(1.5cm + 9cm); transform:translateX(-50%);
+      font-size:40px; letter-spacing:8px;
     }
-
-    .controls button {
-      margin-top: 0.5em;
-      padding: 0.5em 1em;
-      font-family: inherit;
+    .date-label { position:absolute; top:57px; right:1.5cm; font-size:12px; letter-spacing:0.5px; }
+    .fixed-content { text-align:center; }
+    .header-content {
+      font-family:'文鼎中特標準宋體'; font-size:18px; letter-spacing:0.8px; line-height:1.2;
     }
-
-    /* 列印樣式：隱藏不需要的元素，展開表格 */
-    @media print {
-      .controls { display: none !important; }
-      .table-wrapper { overflow: visible !important; }
-      html, body { overflow: visible !important; }
+    .table-container {
+      position:absolute; top:2.35cm; bottom:3cm; left:1.5cm; width:18cm; overflow:visible;
     }
-
+    table {
+      width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0;
+    }
+    th, td {
+      width:4.5cm; padding:0; border:0.5px solid #000;
+      text-align:center; vertical-align:middle;
+    }
+    tr { height:1.45cm; }
+    td div {
+      writing-mode:horizontal-tb; text-orientation:mixed;
+      font-family:'文鼎中特標宋注音'; font-size:24px;
+    }
+    .superscript { font-size:10px; vertical-align:super; }
+    .footer {
+      position:absolute; bottom:0; left:1.5cm; right:1.5cm;
+      text-align:center; font-size:18px; line-height:1.4;
+    }
+    .footer .three { font-size:10px; vertical-align:baseline; }
   </style>
+
+  <!-- 引入 cnchar-all 用於筆劃計算 -->
+  <script src="https://cdn.jsdelivr.net/npm/cnchar-all/cnchar.all.min.js"></script>
 </head>
 <body>
-  <!-- 顯示圖片 -->
-  <img src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" class="logo" alt="Logo">
-
-  <!-- 顯示日期 -->
-  <div class="date-label" id="current-date"></div>
-
-  <!-- 標題區域 -->
-  <h1>　　淨土宗竹山念佛會</h1>
-  
-  <!-- 表格控件區域 -->
   <div class="controls">
-    <textarea id="bulk-input" placeholder="請貼上以逗號或換行分隔的資料..."></textarea>
-    <button id="bulk-load">產生表格</button>
+    <div class="input-group">
+      <label for="bulk-xiaozai">消災者名單：</label>
+      <textarea id="bulk-xiaozai" placeholder="請以逗號或換行分隔…"></textarea>
+    </div>
+    <div class="input-group">
+      <label for="bulk-wangsheng">超薦者名單：</label>
+      <textarea id="bulk-wangsheng" placeholder="請以逗號或換行分隔…"></textarea>
+    </div>
+    <button id="generate">產生表格</button>
   </div>
 
-  <!-- 表格區域 -->
-  <div class="table-container">
-    <table>
-      <tbody id="tbody"></tbody>
-    </table>
+  <!-- 第一面：消災者 -->
+  <div class="page" id="page-xiaozai">
+    <div class="header-left">
+      <img src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" class="logo" alt="宗徽LOGO">
+      <div class="temple-name">淨土宗竹山念佛會</div>
+    </div>
+    <div class="list-title">消災者</div>
+    <div class="date-label" id="date-xiaozai"></div>
+    <div class="table-container"><table><tbody id="tbody-xiaozai"></tbody></table></div>
+    <p class="footer">
+      業障消除，福慧增長，身心安樂，一切吉祥。<br>
+      (翻頁繼續)<br><br>
+    </p>
   </div>
 
-  <!-- 底部回向文 -->
-  <p class="footer">願以此功德　平等施一切　同發菩提心　往生安樂國</p>
+  <!-- 第二面：超薦者 -->
+  <div class="page" id="page-wangsheng">
+    <div class="header-left">
+      <img src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" class="logo" alt="宗徽LOGO">
+      <div class="temple-name">淨土宗竹山念佛會</div>
+    </div>
+    <div class="list-title">超薦者</div>
+    <div class="date-label" id="date-wangsheng"></div>
+    <div class="table-container"><table><tbody id="tbody-wangsheng"></tbody></table></div>
+    <p class="footer">
+      蒙佛接引，往生西方。<br>
+      願以此功德，平等施一切，同發菩提心，往生安樂國。<br>
+      南無阿彌陀佛 <span class="three">(三稱)</span>
+    </p>
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 顯示當天日期
-      const currentDate = new Date();
-      const formattedDate = currentDate.toLocaleDateString(); // 格式化日期
-      document.getElementById('current-date').textContent = `日期: ${formattedDate}`;
-
-      const tbody = document.getElementById('tbody');
-      const heights = Array(16).fill(1.45); // 統一16行高度
-
-      // 生成16行 × 4列
-      heights.forEach(h => {
-        const tr = document.createElement('tr');
-        tr.style.height = h + 'cm';
-        for (let c = 1; c <= 4; c++) {
-          const td = document.createElement('td');
-          const div = document.createElement('div'); // 使用 div 來顯示資料
-          td.appendChild(div);
-          tr.appendChild(td);
-        }
+      // 初始化表格
+      function initTable(tbodyId, headerHTML) {
+        const tbody = document.getElementById(tbodyId);
+        let tr = document.createElement('tr'),
+            td = document.createElement('td');
+        td.colSpan = 4;
+        const divH = document.createElement('div');
+        divH.classList.add('fixed-content','header-content');
+        divH.innerHTML = headerHTML;
+        td.appendChild(divH);
+        tr.appendChild(td);
         tbody.appendChild(tr);
-      });
-
-      document.getElementById('bulk-load').onclick = () => {
-        // 拆分資料
-        const raw = document.getElementById('bulk-input').value;
-        const items = raw.split(/\r?\n|,/).map(v => v.trim()).filter(v => v);
-
-        // 清空所有儲存格
-        document.querySelectorAll('td div').forEach(d => d.innerHTML = '');
-
-        // 填入資料：直接填充每個資料
-        items.forEach((item, k) => {
-          const dp = k; // 填充到相應的欄位
-          const dr = Math.floor(dp / 4), dc = dp % 4;
-          const dateCell = tbody.children[dr].querySelectorAll('td div')[dc];
-
-          // 檢查每一個字元，若是非中文字符，將其設為上標
-          let modifiedItem = '';
-          for (let char of item) {
-            if (!/[\u4e00-\u9fff]/.test(char)) {
-              // 如果是非中文字符，設為上標
-              modifiedItem += `<span class="superscript">${char}</span>`;
-            } else {
-              modifiedItem += char;
-            }
+        for (let i = 0; i < 16; i++) {
+          tr = document.createElement('tr');
+          for (let c = 0; c < 4; c++) {
+            td = document.createElement('td');
+            td.appendChild(document.createElement('div'));
+            tr.appendChild(td);
           }
+          tbody.appendChild(tr);
+        }
+      }
+      initTable('tbody-xiaozai','回向消災堂上消災者，以及消災者：');
+      initTable('tbody-wangsheng','再回向往生堂上眾等往生者，以及往生者：');
 
-          dateCell.innerHTML = modifiedItem; // 填入修改後的資料
+      // 顯示日期
+      const now = new Date(),
+            minguo = `${now.getFullYear()-1911}年${now.getMonth()+1}月${now.getDate()}日`;
+      document.getElementById('date-xiaozai').textContent = minguo;
+      document.getElementById('date-wangsheng').textContent = minguo;
+
+      // 筆劃計算
+      function getStrokeCount(str) {
+        let s;
+        if (typeof str.stroke === 'function') {
+          s = str.stroke();
+        } else if (window.cnchar && typeof cnchar.stroke === 'function') {
+          s = cnchar.stroke(str);
+        } else {
+          return 0;
+        }
+        if (Array.isArray(s)) return s.reduce((a,b)=>a+(typeof b==='number'?b:0),0);
+        return typeof s==='number'? s:0;
+      }
+
+      document.getElementById('generate').onclick = () => {
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        ['xiaozai','wangsheng'].forEach(type => {
+          // 取 raw 並解析
+          const raws = document.getElementById(`bulk-${type}`)
+                        .value.split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean);
+          let items = raws.map(display => {
+            const m = display.match(/(\d{1,2})[\/\-](\d{1,2})/);
+            return {
+              display,
+              date: m
+                ? new Date(now.getFullYear(),
+                           parseInt(m[1],10)-1,
+                           parseInt(m[2],10))
+                : null
+            };
+          })
+          // 過期過濾
+          .filter(x => x.date===null || x.date>=today);
+
+          // 特殊條目
+          const special = items.filter(x =>
+            x.display.startsWith('釋') || x.display.endsWith('法師')
+          );
+          const rest = items.filter(x => !special.includes(x));
+
+          // 排序 special：先有日期，再無日期；有日期內依日期→筆劃；無日期依筆劃
+          const specialDates = special.filter(x => x.date)
+            .sort((a,b) => {
+              const d = a.date - b.date;
+              return d!==0? d : getStrokeCount(a.display) - getStrokeCount(b.display);
+            });
+          const specialNoDates = special.filter(x => !x.date)
+            .sort((a,b) => getStrokeCount(a.display) - getStrokeCount(b.display));
+          const sortedSpecial = [...specialDates, ...specialNoDates];
+
+          // 排序 rest：同 original v03 邏輯
+          rest.sort((a,b) => {
+            if (a.date && b.date) {
+              const d = a.date - b.date;
+              if (d!==0) return d;
+              return getStrokeCount(a.display) - getStrokeCount(b.display);
+            }
+            if (a.date) return -1;
+            if (b.date) return 1;
+            return getStrokeCount(a.display) - getStrokeCount(b.display);
+          });
+
+          const sorted = [...sortedSpecial, ...rest];
+
+          // 填回表格
+          const rows = Array.from(document.querySelectorAll(`#tbody-${type} tr`)).slice(1);
+          rows.forEach(r=>r.querySelectorAll('td div').forEach(d=>d.innerHTML=''));
+          sorted.forEach((item,i) => {
+            const r = Math.floor(i/4), c = i%4;
+            if (r<rows.length) {
+              const html = Array.from(item.display)
+                .map(ch=>/[\u4e00-\u9fff]/.test(ch)?ch:`<span class="superscript">${ch}</span>`)
+                .join('');
+              rows[r].querySelectorAll('td div')[c].innerHTML = html;
+            }
+          });
         });
       };
     });
