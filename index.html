@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>回向表單 20250607v04</title>
+  <title>直式回向表單 20250607v04</title>
   <style>
     @font-face {
       font-family: '文鼎中特標宋注音';
@@ -167,18 +167,25 @@
           const raws = document.getElementById(`bulk-${type}`)
                         .value.split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean);
 
-          // 解析出 date 與 純 name（去掉日期前綴）
+          // 解析出 date 與 純 name（檢測末尾小數點作為“明年”標記）
           const items = raws.map(display => {
-            const m = display.match(/^(\d{1,2}[\/\-]\d{1,2})\s*(.*)$/);
-            return {
-              display,
-              name:  m ? m[2] : display,
-              date:  m
-                      ? new Date(now.getFullYear(),
-                                 parseInt(m[1].split(/\/|-/)[0],10)-1,
-                                 parseInt(m[1].split(/\/|-/)[1],10))
-                      : null
-            };
+            const m = display.match(/^(\d{1,2}[\/\-]\d{1,2}\.?)\s*(.*)$/);
+            let name, date;
+            if (m) {
+              let ds = m[1], marker = false;
+              if (ds.endsWith('.')) {
+                marker = true;
+                ds = ds.slice(0, -1);
+              }
+              name = m[2];
+              const [mm, dd] = ds.split(/\/|-/).map(n=>parseInt(n, 10));
+              const year = marker ? now.getFullYear()+1 : now.getFullYear();
+              date = new Date(year, mm-1, dd);
+            } else {
+              name = display;
+              date = null;
+            }
+            return { display, name, date };
           });
 
           // 1. 特殊條目 (釋* 或 *法師)
