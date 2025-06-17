@@ -1,225 +1,239 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>直式回向表單 20250607v05</title>
-  <style>
-    @font-face {
-      font-family: '文鼎中特標宋注音';
-      src: url('https://cdn.jsdelivr.net/gh/mt3722/TableMaker/StdMingZuinnEG-Eb.woff2?v=20250506-30') format('woff2'),
-           url('https://cdn.jsdelivr.net/gh/mt3722/TableMaker/StdMingZuinnEG-Eb.woff?v=20250506-30') format('woff'),
-           url('https://cdn.jsdelivr.net/gh/mt3722/TableMaker/文鼎中特標宋注音.ttc?v=20250506-30') format('truetype');
-    }
-    @page { size: A4 portrait; margin: 0; }
-    html, body { margin:0; padding:0; width:100%; height:100%; font-family:'文鼎中特標準宋體'; }
-    body { position:relative; }
-    .controls {
-      position:absolute; top:1cm; left:1cm; right:1cm;
-      background:rgba(255,255,255,0.9); padding:0.5em; border-radius:4px; z-index:10;
-    }
-    .input-group { margin-bottom:0.5em; }
-    .input-group label { font-size:16px; font-weight:bold; display:block; margin-bottom:0.2em; }
-    .input-group textarea { width:100%; height:4em; font-size:14px; }
-    .controls button { padding:0.5em 1em; font-size:14px; cursor:pointer; }
-    .page { width:100%; height:100%; position:relative; box-sizing:border-box; }
-    @media print { .page { page-break-after:always; } .controls { display:none!important; } }
-    .header-left { position:absolute; top:50px; left:1.5cm; display:flex; align-items:center; }
-    .header-left .logo { width:0.5cm; height:auto; margin-right:0.5em; }
-    .header-left .temple-name { font-size:16px; letter-spacing:1px; }
-    .list-title {
-      position:absolute; top:30px; left:calc(1.5cm + 9cm); transform:translateX(-50%);
-      font-size:40px; letter-spacing:8px;
-    }
-    .date-label { position:absolute; top:57px; right:1.5cm; font-size:12px; letter-spacing:0.5px; }
-    .fixed-content { text-align:center; }
-    .header-content {
-      font-family:'文鼎中特標準宋體'; font-size:18px; letter-spacing:0.8px; line-height:1.2;
-    }
-    .table-container {
-      position:absolute; top:2.35cm; bottom:3cm; left:1.5cm; width:18cm; overflow:visible;
-    }
-    table {
-      width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0;
-    }
-    th, td {
-      width:4.5cm; padding:0; border:0.5px solid #000;
-      text-align:center; vertical-align:middle;
-    }
-    tr { height:1.45cm; }
-    td div {
-      writing-mode:horizontal-tb; text-orientation:mixed;
-      font-family:'文鼎中特標宋注音'; font-size:24px;
-    }
-    .superscript { font-size:10px; vertical-align:super; }
-    .footer {
-      position:absolute; bottom:0; left:1.5cm; right:1.5cm;
-      text-align:center; font-size:18px; line-height:1.4;
-    }
-    .footer .three { font-size:10px; vertical-align:baseline; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>回向表單 20250617 v13</title>
 
-  <!-- 引入 cnchar-all 用於上標注音（筆劃比較使用 Intl.Collator） -->
-  <script src="https://cdn.jsdelivr.net/npm/cnchar-all/cnchar.all.min.js"></script>
+<!-- ① 字型 -->
+<style>
+@font-face{font-family:'GenRyuMin2';
+  src:url('https://raw.githubusercontent.com/mt3722/TableMaker/main/GenRyuMin2TW-B.woff2') format('woff2'),
+      url('https://raw.githubusercontent.com/mt3722/TableMaker/main/GenRyuMin2TW-B.woff')  format('woff');}
+@font-face{font-family:'BpmfGenRyuMin';
+  src:url('https://raw.githubusercontent.com/mt3722/TableMaker/main/BpmfGenRyuMin-B.woff2') format('woff2'),
+      url('https://raw.githubusercontent.com/mt3722/TableMaker/main/BpmfGenRyuMin-B.woff')  format('woff');}
+</style>
+
+<style>
+/* ② 全域與版面 -------------------------------------------------- */
+@page{size:A4 portrait;margin:0;}
+html,body{margin:0;width:100%;height:100%;font-family:'GenRyuMin2',serif;}
+*{font-family:inherit;box-sizing:border-box;}
+
+.page{position:relative;width:100%;height:1123px;}
+@media print{.page{page-break-after:always;}}
+
+.container{position:relative;width:680px;margin:0 auto;height:100%;}
+
+/* ③ 控制面板 ---------------------------------------------------- */
+.controls{padding:8px 16px;background:#f7f7f7;border-radius:6px;
+          box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.input-group{margin-bottom:12px;}
+.input-group label{font-size:16px;font-weight:bold;margin-bottom:4px;display:block;}
+.input-group textarea{width:100%;height:64px;font-size:18px;line-height:1.5;}
+.controls button{padding:6px 12px;font-size:16px;cursor:pointer;}
+@media print{.controls{display:none!important;}}
+
+/* ④ 頁眉 -------------------------------------------------------- */
+.header-left{position:absolute;top:50px;left:0;display:flex;align-items:center;}
+.header-left .logo{width:19px;margin-right:8px;}
+.header-left .temple-name{font-size:16px;letter-spacing:1px;}
+
+.list-title{position:absolute;top:30px;left:0;right:0;text-align:center;
+            font-size:40px;letter-spacing:8px;}
+
+.date-label{position:absolute;top:57px;right:0;font-size:12px;}
+
+/* ⑤ frame + 說明欄 ---------------------------------------------- */
+:root{
+  --frame-top:120px;       /* 說明欄頂距 */
+  --sub-height:120px;      /* 100-120說明欄高   */
+}
+.frame{
+  position:absolute;
+  top:var(--frame-top);
+  left:0;right:0;
+  bottom:130px;            /* 180-130預設留白 (Page1 用) */
+  border:2px solid #000;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+/* ★★★ 第二頁另行留更大底邊 & 說明欄更矮 */
+.page-wang  .frame{bottom:140px;}   /* ← 底留白加大 */
+.page-wang  .sub{flex:0 0 100px;}    /* ← 說明欄高度 80px */
+
+/* 說明欄 */
+.sub{
+  flex:0 0 var(--sub-height);
+  padding:0 8px;font-size:22px;text-align:center;
+  display:flex;align-items:center;justify-content:center;
+  line-height:1.4;
+}
+
+/* ⑥ 表格 -------------------------------------------------------- */
+.data{flex:1;display:grid;grid-template-columns:repeat(4,1fr);
+      grid-template-rows:repeat(15,1fr);}
+.page-wang .data{grid-template-rows:repeat(14,1fr);}   /* ★★★ Page2 14 列 */
+
+.data table,.data tbody,.data tr{display:contents;}
+td{border:1px solid #000;display:flex;align-items:center;justify-content:center;
+   font-size:16px;font-family:'BpmfGenRyuMin','GenRyuMin2',serif;
+   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+td div{font-size:24px;line-height:1;}
+.superscript{font-size:10px;vertical-align:super;}
+td:first-child{border-left:none;}td:last-child{border-right:none;}
+td:nth-last-child(-n+4){border-bottom:none;}
+
+/* ⑦ 頁腳 -------------------------------------------------------- */
+.footer-xiaozai,.footer-wang{
+  position:absolute;left:0px;right:0px;text-align:center;
+}
+.footer-xiaozai{bottom:40px;}        /* Page1 */
+.footer-wang  {bottom:20px;}        /* ★★★ Page2 再靠下 20px */
+
+.blessing-x{font-size:20px;}
+.note-x{font-size:14px;margin-top:8px;display:inline-block;}
+.blessing-w{font-size:18px;line-height:1.6;}    
+.footer .three{font-size:10px;} /* 三稱小字 */
+</style>
 </head>
 <body>
 
-  <div class="controls">
-    <div class="input-group">
-      <label for="bulk-xiaozai">消災者名單：</label>
-      <textarea id="bulk-xiaozai" placeholder="請以逗號或換行分隔…"></textarea>
-    </div>
-    <div class="input-group">
-      <label for="bulk-wangsheng">超薦者名單：</label>
-      <textarea id="bulk-wangsheng" placeholder="請以逗號或換行分隔…"></textarea>
-    </div>
-    <button id="generate">產生表格</button>
+<!-- ⑧ 控制面板 --------------------------------------------------- -->
+<div class="controls">
+  <div class="input-group">
+    <label for="bulk-xiaozai">消災者名單：</label>
+    <textarea id="bulk-xiaozai" placeholder="請以逗號或換行分隔…"></textarea>
   </div>
+  <div class="input-group">
+    <label for="bulk-wangsheng">超薦者名單：</label>
+    <textarea id="bulk-wangsheng" placeholder="請以逗號或換行分隔…"></textarea>
+  </div>
+  <button id="generate">產生表格</button>
+</div>
 
-  <!-- 第一面：消災者 -->
-  <div class="page" id="page-xiaozai">
+<!-- ⑨ Page 1：消災者 --------------------------------------------- -->
+<div class="page page-xiao">
+  <div class="container">
     <div class="header-left">
-      <img src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" class="logo" alt="宗徽LOGO">
+      <img class="logo" src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" alt="LOGO">
       <div class="temple-name">淨土宗竹山念佛會</div>
     </div>
-    <div class="list-title">消災者</div>
+    <div class="list-title">消 災 者</div>
     <div class="date-label" id="date-xiaozai"></div>
-    <div class="table-container"><table><tbody id="tbody-xiaozai"></tbody></table></div>
-    <p class="footer">
-      業障消除，福慧增長，身心安樂，一切吉祥。<br>
-      (翻頁繼續)<br><br>
+
+    <div class="frame">
+      <div class="sub">
+        回向中華淨土宗協會四眾弟子<br>
+        今日與會大眾及眷屬　消災堂上一切消災者<br>
+        以及消災者：（念名單）
+      </div>
+      <div class="data"><table><tbody id="tbody-xiaozai"></tbody></table></div>
+    </div>
+
+    <p class="footer footer-xiaozai">
+      <span class="blessing-x">業障消除　福慧增長　身心安樂　一切吉祥</span><br>
+      <span class="note-x">( 翻頁繼續 )</span>
     </p>
   </div>
+</div>
 
-  <!-- 第二面：超薦者 -->
-  <div class="page" id="page-wangsheng">
+<!-- ⑩ Page 2：超薦者 --------------------------------------------- -->
+<div class="page page-wang">
+  <div class="container">
     <div class="header-left">
-      <img src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" class="logo" alt="宗徽LOGO">
+      <img class="logo" src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" alt="LOGO">
       <div class="temple-name">淨土宗竹山念佛會</div>
     </div>
-    <div class="list-title">超薦者</div>
+    <div class="list-title">超  薦  者</div>
     <div class="date-label" id="date-wangsheng"></div>
-    <div class="table-container"><table><tbody id="tbody-wangsheng"></tbody></table></div>
-    <p class="footer">
-      蒙佛接引，往生西方。<br>
-      願以此功德，平等施一切，同發菩提心，往生安樂國。<br>
-      南無阿彌陀佛 <span class="three">(三稱)</span>
+
+    <div class="frame">
+      <div class="sub">
+        再回向往生堂上眾等往生者<br>
+        以及往生者：（念名單）
+      </div>
+      <div class="data"><table><tbody id="tbody-wangsheng"></tbody></table></div>
+    </div>
+
+    <p class="footer footer-wang">
+      <span class="blessing-w">
+        蒙佛接引　往生西方<br>
+        願以此功德　平等施一切　同發菩提心　往生安樂國<br>
+        南無阿彌陀佛 <span class="three">(三稱)</span>
+      </span>
     </p>
   </div>
+</div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
+<!-- ⑪ Javascript -------------------------------------------------- -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-      // 建表：首列 + 16 行空列
-      function initTable(tbodyId, headerHTML) {
-        const tbody = document.getElementById(tbodyId);
-        let tr = document.createElement('tr'),
-            td = document.createElement('td');
-        td.colSpan = 4;
-        const divH = document.createElement('div');
-        divH.classList.add('fixed-content','header-content');
-        divH.innerHTML = headerHTML;
-        td.appendChild(divH);
+  /* 建立表格 ------------------------------------------------------ */
+  function build(id, rows=15){               /* ★★★ 加 rows 參數 */
+    const tb=document.getElementById(id);
+    tb.innerHTML='';
+    for(let r=0;r<rows;r++){
+      const tr=document.createElement('tr');
+      for(let c=0;c<4;c++){
+        const td=document.createElement('td');
+        td.appendChild(document.createElement('div'));
         tr.appendChild(td);
-        tbody.appendChild(tr);
-        for (let i = 0; i < 16; i++) {
-          tr = document.createElement('tr');
-          for (let c = 0; c < 4; c++) {
-            td = document.createElement('td');
-            td.appendChild(document.createElement('div'));
-            tr.appendChild(td);
-          }
-          tbody.appendChild(tr);
-        }
       }
-      initTable('tbody-xiaozai','回向消災堂上消災者，以及消災者：');
-      initTable('tbody-wangsheng','再回向往生堂上眾等往生者，以及往生者：');
+      tb.appendChild(tr);
+    }
+  }
+  build('tbody-xiaozai');          /* 15 列 */
+  build('tbody-wangsheng',14);     /* 14 列 ★★★ */
 
-      // 顯示今日民國日期
-      const now = new Date();
-      const minguo = `${now.getFullYear()-1911}年${now.getMonth()+1}月${now.getDate()}日`;
-      document.getElementById('date-xiaozai').textContent = minguo;
-      document.getElementById('date-wangsheng').textContent = minguo;
+  /* 今日日期 ------------------------------------------------------ */
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const minguo=`${now.getFullYear()-1911}年${now.getMonth()+1}月${now.getDate()}日`;
+  document.getElementById('date-xiaozai').textContent=minguo;
+  document.getElementById('date-wangsheng').textContent=minguo;
 
-      // 保留：筆劃計算（若未來需要）
-      function getStrokeCount(str) {
-        let s;
-        if (typeof str.stroke === 'function') {
-          s = str.stroke();
-        } else if (window.cnchar && typeof cnchar.stroke === 'function') {
-          s = cnchar.stroke(str);
-        } else {
-          return 0;
+  /* 筆畫排序 ------------------------------------------------------ */
+  const strokeCol=new Intl.Collator('zh-Hant-u-co-stroke');
+
+  /* 產生表格 ------------------------------------------------------ */
+  document.getElementById('generate').onclick=()=>{
+    ['xiaozai','wangsheng'].forEach(type=>{
+      const rows=type==='xiaozai'?15:14;               /* ★★★ 依頁別 */
+      const tokens=document.getElementById(`bulk-${type}`).value
+        .split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean);
+
+      const items=tokens.map(t=>{
+        const m=t.match(/(\d{1,2}[\/\-]\d{1,2}\.?)/);
+        let name=t,date=null;
+        if(m){
+          let ds=m[1],nextYr=false;
+          if(ds.endsWith('.')){nextYr=true;ds=ds.slice(0,-1);}
+          const [mm,dd]=ds.split(/\/|-/).map(Number);
+          date=new Date(nextYr?now.getFullYear()+1:now.getFullYear(),mm-1,dd);
+          name=t.replace(m[1],'').trim();
         }
-        if (Array.isArray(s)) return s.reduce((a,b)=>a+(typeof b==='number'?b:0),0);
-        return typeof s==='number'? s:0;
-      }
+        return{raw:t,name,date};
+      });
 
-      // 新增：筆劃排序比較器
-      const strokeCollator = new Intl.Collator('zh-Hant-u-co-stroke');
+      const valid=items.filter(it=>!it.date||it.date>=today);
+      const special=valid.filter(x=>x.name.startsWith('釋')||x.name.endsWith('法師'));
+      const rest=valid.filter(x=>!special.includes(x));
+      special.sort((a,b)=>strokeCol.compare(a.name,b.name));
+      rest.sort((a,b)=>strokeCol.compare(a.name,b.name));
+      const ordered=[...special,...rest];
 
-      document.getElementById('generate').onclick = () => {
-        // 當天 00:00
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-        ['xiaozai','wangsheng'].forEach(type => {
-          // 原始文字拆行或逗號
-          const raws = document.getElementById(`bulk-${type}`)
-                        .value.split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean);
-
-          // 解析出 date 與 純 name（檢測末尾小數點作為“明年”標記）
-          const items = raws.map(display => {
-            const m = display.match(/^(\d{1,2}[\/\-]\d{1,2}\.?)\s*(.*)$/);
-            let name, date;
-            if (m) {
-              let ds = m[1], marker = false;
-              if (ds.endsWith('.')) {
-                marker = true;
-                ds = ds.slice(0, -1);
-              }
-              name = m[2];
-              const [mm, dd] = ds.split(/\/|-/).map(n=>parseInt(n, 10));
-              const year = marker ? now.getFullYear()+1 : now.getFullYear();
-              date = new Date(year, mm-1, dd);
-            } else {
-              name = display;
-              date = null;
-            }
-            return { display, name, date };
-          });
-
-          // 1. 特殊條目 (釋* 或 *法師)
-          const special = items.filter(x =>
-            x.name.startsWith('釋') || x.name.endsWith('法師')
-          );
-          // 2. 其餘
-          const rest = items.filter(x => !special.includes(x));
-
-          // 3. 分別依 name 筆劃排序
-          special.sort((a,b) => strokeCollator.compare(a.name, b.name));
-          rest.sort((a,b)    => strokeCollator.compare(a.name, b.name));
-
-          // 4. 合併後再剔除過期
-          const finalList = [...special, ...rest]
-            .filter(x => x.date === null || x.date >= today);
-
-          // 填入表格
-          const rows = Array.from(document.querySelectorAll(`#tbody-${type} tr`)).slice(1);
-          rows.forEach(r => r.querySelectorAll('td div').forEach(d=>d.innerHTML=''));
-          finalList.forEach((item,i) => {
-            const r = Math.floor(i/4), c = i%4;
-            if (r < rows.length) {
-              const html = Array.from(item.display)
-                .map(ch => /[\u4e00-\u9fff]/.test(ch)
-                           ? ch
-                           : `<span class="superscript">${ch}</span>`)
-                .join('');
-              rows[r].querySelectorAll('td div')[c].innerHTML = html;
-            }
-          });
-        });
-      };
+      const tds=[...document.querySelectorAll(`#tbody-${type} td`)];
+      tds.forEach(td=>td.firstChild.innerHTML='');
+      ordered.slice(0,rows*4).forEach((it,i)=>{
+        tds[i].firstChild.innerHTML=[...it.raw].map(ch=>
+          /[\u4e00-\u9fff]/.test(ch)?ch:`<span class="superscript">${ch}</span>`
+        ).join('');
+      });
     });
-  </script>
+  };
+});
+</script>
 </body>
 </html>
