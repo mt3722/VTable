@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>淨土宗竹山念佛會 - 回向名單管理系統 (V4.4 置頂修正版)</title>
+<title>淨土宗竹山念佛會 - 回向名單管理系統 (V5.2 位置微調版)</title>
 
 <style>
 /* =========================================
@@ -210,7 +210,7 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 
 
 /* =========================================
-   6. 橫式頁面專用樣式 (Page 3) - V4.4 置頂修正版
+   6. 橫式頁面專用樣式 (Page 3) - V5.2 位置微調版
    ========================================= */
 .page-horizontal {
     position: relative;
@@ -242,9 +242,12 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
     font-size: 12px; letter-spacing: 1px; font-family:'GenRyuMin2';
 }
 
+/* ★★★ 表格容器：往下移動 10px ★★★ */
 .page-horizontal .table-container {
     width: 26.4cm;
     margin: auto;
+    position: relative; 
+    top: 10px; /* 往下 10px */
 }
 
 .page-horizontal table {
@@ -264,7 +267,7 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 
 .page-horizontal tr:nth-child(2) td,
 .page-horizontal tr:nth-child(4) td,
-.page-horizontal tr:nth-child(6) td { height:4.50cm; }
+.page-horizontal tr:nth-child(6) td { height:4.85cm; }
 
 /* 日期樣式 */
 .page-horizontal .cell-date-display {
@@ -273,29 +276,33 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
     font-size:16px; font-family:'GenRyuMin2';
 }
 
-/* ★★★ 名字樣式 (修正為置頂) ★★★ */
+/* 名字樣式 */
 .page-horizontal .cell-name-display {
     width: 100%; height: 100%;
     padding: 0; margin: 0;
     
     font-family:'BpmfGenRyuMin', 'GenRyuMin2';
-    font-size: 24px; 
-    letter-spacing: 2px;
+    
+    font-size: 22px; 
+    letter-spacing: 1px;
     
     writing-mode: vertical-rl; text-orientation: upright;
     
-    /* 關鍵排版修正 */
     display: flex; 
-    align-items: center; /* 水平居中 (相對於直書軸線) */
-    justify-content: flex-start; /* 垂直靠上 (直書的主軸起始點) */
-    padding-top: 15px; /* 增加頂部留白，避免字體貼邊 */
+    align-items: center; 
+    justify-content: flex-start; /* 置頂 */
+    
+    padding-top: 10px; 
     
     white-space: nowrap; 
 }
 
+/* ★★★ 頁腳：往下移動 10px ★★★ */
 .page-horizontal .footer {
     text-align: center; font-size: 24px; letter-spacing: 2px;
     margin-bottom: 10px;
+    position: relative;
+    top: 10px; /* 往下 10px */
 }
 
 </style>
@@ -350,7 +357,7 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
     <div class="controls-container">
         <div class="panel">
             <div class="panel-header">
-                <h3>消災名單 <span class="subtitle">預設 7 天</span></h3>
+                <h3>消災名單 <span class="subtitle">預設 7 天 (N+7)</span></h3>
                 <div class="header-btns">
                     <button class="btn btn-warning btn-sm" id="btn-clean-xiaozai">清除過期</button>
                     <button class="btn btn-danger btn-sm" id="btn-reset-xiaozai">清空所有</button>
@@ -384,7 +391,7 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 
         <div class="panel">
             <div class="panel-header">
-                <h3>超薦名單 <span class="subtitle">預設 49 天</span></h3>
+                <h3>超薦名單 <span class="subtitle">預設 49 天 (N+48)</span></h3>
                 <div class="header-btns">
                     <button class="btn btn-warning btn-sm" id="btn-clean-wangsheng">清除過期</button>
                     <button class="btn btn-danger btn-sm" id="btn-reset-wangsheng">清空所有</button>
@@ -503,7 +510,7 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 </div>
 
 <script>
-const STORAGE_KEY = 'temple_list_data_v2';
+const STORAGE_KEY = 'temple_list_data_v5'; // Update version key
 let db = { xiaozai: [], wangsheng: [] };
 let currentEditType = null;
 let currentEditId = null;
@@ -524,13 +531,28 @@ function initApp() {
 function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
 function getTodayMidnight() { const now = new Date(); return new Date(now.getFullYear(), now.getMonth(), now.getDate()); }
 
+// ★★★ 核心邏輯升級：計算截止日 ★★★
 function getExpiryDate(item, type) {
-    if (item.isPermanent) return null;
-    if (item.manualExpiryIso) return new Date(item.manualExpiryIso);
+    if (item.isPermanent) return null; // 永久
+    if (item.manualExpiryIso) return new Date(item.manualExpiryIso); // 自訂截止日
 
     const start = new Date(item.parsedDateIso);
-    const defaultDays = (type === 'xiaozai') ? 7 : 49;
-    const days = item.durationDays || defaultDays;
+    
+    // 對年邏輯 (Year + 1)
+    if (item.isOneYear) {
+        const exp = new Date(start);
+        exp.setFullYear(exp.getFullYear() + 1);
+        return exp;
+    }
+
+    // 一般天數邏輯
+    let days = 0;
+    if (type === 'xiaozai') {
+        days = (item.durationDays !== undefined) ? item.durationDays : 7; // 消災預設 N+7
+    } else {
+        days = (item.durationDays !== undefined) ? item.durationDays : 48; // 超薦預設 N+48
+    }
+    
     const exp = new Date(start);
     exp.setDate(start.getDate() + days);
     return exp;
@@ -582,14 +604,18 @@ function parseInput(text, type, defaultDateVal) {
         }
 
         if (workingString) {
+            // ★★★ 初始化預設值 ★★★
+            let defaultDuration = (type === 'xiaozai') ? 7 : 48; // 預設 7天 或 48天(49日)
+            
             newItems.push({
                 id: generateId(),
                 name: workingString,
                 displayDate: displayDate,
                 parsedDateIso: parsedDateIso,
                 isHeJiao: isHeJiao,
-                durationDays: (type === 'xiaozai' ? 7 : 49),
+                durationDays: defaultDuration, 
                 isPermanent: false,
+                isOneYear: false, // 新增對年旗標
                 manualExpiryIso: null
             });
         }
@@ -713,10 +739,8 @@ function renderPrintTable(type) {
 function renderHorizontalTable() {
     const tbody = document.getElementById('tbody-horizontal');
     tbody.innerHTML = '';
-
     const type = 'wangsheng';
     const validItems = db[type].filter(item => !checkExpired(item, type));
-    
     const strokeCol = new Intl.Collator('zh-Hant-u-co-stroke');
     const special = validItems.filter(x => x.name.startsWith('釋') || x.name.endsWith('法師'));
     const rest = validItems.filter(x => !special.includes(x));
@@ -724,19 +748,16 @@ function renderHorizontalTable() {
     rest.sort((a, b) => strokeCol.compare(a.name, b.name));
     const ordered = [...special, ...rest];
 
-    [0.84,4.50,0.84,4.50,0.84,4.50].forEach(h => {
+    // ★★★ 更新高度陣列 ★★★
+    [0.84,4.85,0.84,4.85,0.84,4.85].forEach(h => {
         const tr = document.createElement('tr');
         tr.style.height = h + 'cm';
         for (let i = 0; i < 20; i++) {
             const td = document.createElement('td');
             if (h === 0.84) {
-                 const div = document.createElement('div');
-                 div.className = 'cell-date-display';
-                 td.appendChild(div);
+                 const div = document.createElement('div'); div.className = 'cell-date-display'; td.appendChild(div);
             } else {
-                 const div = document.createElement('div');
-                 div.className = 'cell-name-display';
-                 td.appendChild(div);
+                 const div = document.createElement('div'); div.className = 'cell-name-display'; td.appendChild(div);
             }
             tr.appendChild(td);
         }
@@ -745,31 +766,25 @@ function renderHorizontalTable() {
 
     ordered.slice(0, 60).forEach((item, k) => {
         const dp = k < 20 ? k : (k < 40 ? k + 20 : k + 40); 
-        const dr = Math.floor(dp / 20);
-        const dc = dp % 20;
-
+        const dr = Math.floor(dp / 20); const dc = dp % 20;
         const np = k < 20 ? 20 + k : (k < 40 ? 40 + k : 60 + k); 
-        const nr = Math.floor(np / 20);
-        const nc = np % 20;
+        const nr = Math.floor(np / 20); const nc = np % 20;
 
         const dateDiv = tbody.children[dr].children[dc].querySelector('.cell-date-display');
-        if (dateDiv && item.displayDate) {
-            dateDiv.textContent = item.displayDate;
-        }
+        if (dateDiv && item.displayDate) dateDiv.textContent = item.displayDate;
 
         const nameDiv = tbody.children[nr].children[nc].querySelector('.cell-name-display');
         if (nameDiv) {
             const cleanName = [...item.name].map(ch => /[\u4e00-\u9fff\u3105-\u3129a-zA-Z0-9]/.test(ch) ? ch : '').join('');
             nameDiv.textContent = cleanName;
-            
-            // ★★★ 設定為固定縮小字體與字距 (24px / 2px) ★★★
-            nameDiv.style.fontSize = '24px';
-            nameDiv.style.letterSpacing = '2px'; 
+            // ★★★ 同步更新 JS 中的字體設定 ★★★
+            nameDiv.style.fontSize = '22px'; 
+            nameDiv.style.letterSpacing = '1px'; 
         }
     });
 }
 
-
+// ★★★ 編輯視窗邏輯 (動態選項) ★★★
 window.openEditModal = function(type, id) {
     const item = db[type].find(i => i.id === id);
     if (!item) return;
@@ -781,27 +796,47 @@ window.openEditModal = function(type, id) {
     document.getElementById('edit-date-input').value = item.parsedDateIso ? item.parsedDateIso.split('T')[0] : '';
 
     const radioContainer = document.getElementById('radio-container');
-    const defaultDays = (type === 'xiaozai') ? 7 : 49;
     
-    radioContainer.innerHTML = `
-        <label class="radio-label"><input type="radio" name="duration-opt" value="default" checked> 預設 (${defaultDays}天)</label>
-        <label class="radio-label"><input type="radio" name="duration-opt" value="perm"> 永久</label>
-        <label class="radio-label"><input type="radio" name="duration-opt" value="custom"> 自訂</label>
-    `;
+    // 動態生成 HTML 
+    if (type === 'xiaozai') {
+        radioContainer.innerHTML = `
+            <label class="radio-label"><input type="radio" name="duration-opt" value="default" checked> 預設 (N+7天)</label>
+            <label class="radio-label"><input type="radio" name="duration-opt" value="perm"> 永久</label>
+            <label class="radio-label"><input type="radio" name="duration-opt" value="custom"> 自訂</label>
+        `;
+    } else {
+        // 超薦選項
+        radioContainer.innerHTML = `
+            <label class="radio-label"><input type="radio" name="duration-opt" value="default" checked> 49天 (N+48)</label>
+            <label class="radio-label"><input type="radio" name="duration-opt" value="100days"> 百日 (N+99)</label>
+            <label class="radio-label"><input type="radio" name="duration-opt" value="oneyear"> 對年 (Year+1)</label>
+            <label class="radio-label"><input type="radio" name="duration-opt" value="perm"> 永久</label>
+            <label class="radio-label"><input type="radio" name="duration-opt" value="custom"> 自訂</label>
+        `;
+    }
 
+    // 設定選中狀態
     const radios = document.getElementsByName('duration-opt');
     const customRow = document.getElementById('custom-date-row');
     const customInput = document.getElementById('edit-expiry-input');
     customRow.style.display = 'none';
 
     if (item.isPermanent) {
-        radios[1].checked = true;
+        setRadio('perm');
     } else if (item.manualExpiryIso) {
-        radios[2].checked = true;
+        setRadio('custom');
         customRow.style.display = 'block';
         customInput.value = item.manualExpiryIso.split('T')[0];
+    } else if (item.isOneYear) {
+        setRadio('oneyear');
+    } else if (type === 'wangsheng' && item.durationDays === 99) {
+        setRadio('100days');
     } else {
-        radios[0].checked = true;
+        setRadio('default');
+    }
+
+    function setRadio(val) {
+        radios.forEach(r => { if (r.value === val) r.checked = true; });
     }
 
     radios.forEach(r => {
@@ -830,24 +865,27 @@ function saveEdit() {
         item.displayDate = `${d.getMonth()+1}/${d.getDate()}`;
     }
 
+    // 讀取有效期設定
     const mode = document.querySelector('input[name="duration-opt"]:checked').value;
-    const defaultDays = (currentEditType === 'xiaozai') ? 7 : 49;
+    
+    // 重置所有特殊旗標
+    item.isPermanent = false;
+    item.isOneYear = false;
+    item.manualExpiryIso = null;
+    item.durationDays = (currentEditType === 'xiaozai') ? 7 : 48; // 回復預設
 
     if (mode === 'perm') {
         item.isPermanent = true;
-        item.manualExpiryIso = null;
-        item.durationDays = 0;
     } else if (mode === 'custom') {
         const dateVal = document.getElementById('edit-expiry-input').value;
         if (!dateVal) { alert('請選擇截止日期'); return; }
-        item.isPermanent = false;
         item.manualExpiryIso = new Date(dateVal).toISOString();
-        item.durationDays = 0;
-    } else {
-        item.isPermanent = false;
-        item.manualExpiryIso = null;
-        item.durationDays = defaultDays;
-    }
+    } else if (mode === '100days') {
+        item.durationDays = 99; // N+99
+    } else if (mode === 'oneyear') {
+        item.isOneYear = true;
+    } 
+    // mode 'default' uses the reset values above
 
     saveToStorage();
     document.getElementById('edit-modal').style.display = 'none';
