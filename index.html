@@ -3,513 +3,737 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>回向表單 20250725 v12 (新增讀取檔案功能)</title>
+<title>淨土宗竹山念佛會 - 回向名單管理系統 (最終完整版)</title>
 
 <style>
+/* =========================================
+   1. 字型設定 (僅用於列印區塊)
+   ========================================= */
 @font-face{font-family:'GenRyuMin2';
   src:url('https://raw.githubusercontent.com/mt3722/TableMaker/main/GenRyuMin2TW-B.woff2') format('woff2'),
        url('https://raw.githubusercontent.com/mt3722/TableMaker/main/GenRyuMin2TW-B.woff')  format('woff');}
 @font-face{font-family:'BpmfGenRyuMin';
   src:url('https://raw.githubusercontent.com/mt3722/TableMaker/main/BpmfGenRyuMin-B.woff2') format('woff2'),
        url('https://raw.githubusercontent.com/mt3722/TableMaker/main/BpmfGenRyuMin-B.woff')  format('woff');}
-</style>
 
-<style>
-/* ② 全域與版面 -------------------------------------------------- */
+/* =========================================
+   2. 全域基礎設定
+   ========================================= */
 @page{size:A4 portrait;margin:0;}
-html,body{margin:0;width:100%;height:100%;font-family:'GenRyuMin2',serif;}
-*{font-family:inherit;box-sizing:border-box;}
+html,body{margin:0;width:100%;height:100%;}
+body { 
+    font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; /* 管理介面預設字體 */
+    background-color: #f4f6f9; 
+}
+*{box-sizing:border-box;}
 
-.page{position:relative;width:100%;height:1123px;}
-@media print{.page{page-break-after:always;}}
+/* =========================================
+   3. 管理控制面板樣式 (CSS Scope: .controls-wrapper)
+   ========================================= */
+.controls-wrapper {
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-bottom: 4px solid #8b5a2b; /* 佛教色系裝飾線 */
+    position: relative; 
+    z-index: 10; /* 確保浮在預覽層之上 */
+    margin-bottom: 20px;
+}
+
+.top-bar {
+    max-width: 1200px; margin: 0 auto 20px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.app-title { font-size: 24px; font-weight: bold; color: #333; display: flex; align-items: center; gap: 10px; }
+.btn-print {
+    background-color: #6c5ce7; color: white; padding: 8px 20px; 
+    border-radius: 5px; font-size: 16px; border: none; cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;
+    display: flex; align-items: center; gap: 5px;
+}
+.btn-print:hover { background-color: #5b4cc4; transform: translateY(-1px); }
+
+.controls-container {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 25px;
+}
+
+.panel {
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+    overflow: hidden; display: flex; flex-direction: column; height: 600px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.panel-header {
+    background: #f8f9fa; padding: 12px 15px; border-bottom: 1px solid #ddd;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.panel-header h3 { margin: 0; font-size: 18px; color: #2c3e50; }
+.panel-header .subtitle { font-size: 12px; color: #666; font-weight: normal; margin-left: 5px;}
+
+.input-area { padding: 15px; background: #fff; border-bottom: 1px solid #eee; }
+.input-row { display: flex; gap: 10px; margin-bottom: 5px; }
+.input-area textarea {
+    flex: 1; height: 60px; font-size: 15px; padding: 8px;
+    border: 1px solid #ced4da; border-radius: 4px; resize: none; font-family: inherit;
+}
+.date-picker-wrapper { display: flex; flex-direction: column; gap: 5px; min-width: 130px; }
+.date-picker-wrapper label { font-size: 12px; color: #666; }
+.date-picker-wrapper input[type="date"] { padding: 6px; border: 1px solid #ced4da; border-radius: 4px; }
+
+/* 按鈕樣式 */
+.btn { padding: 6px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-primary { background: #0984e3; color: white; } .btn-primary:hover { background: #0070d6; }
+.btn-warning { background: #fdcb6e; color: #333; } .btn-warning:hover { background: #e1b12c; }
+.btn-danger { background: #d63031; color: white; } .btn-danger:hover { background: #c02828; }
+.btn-secondary { background: #b2bec3; color: white; } .btn-secondary:hover { background: #636e72; }
+.btn-success { background: #00b894; color: white; } .btn-success:hover { background: #00896c; }
+
+/* 管理列表樣式 (橫向表格) */
+.list-view { flex: 1; overflow-y: auto; background: #fff; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.admin-table th {
+    position: sticky; top: 0; background: #dfe6e9; color: #2d3436;
+    padding: 10px; text-align: left; font-weight: 600; z-index: 2; border-bottom: 2px solid #ccc;
+}
+/* 強制管理表格為一般樣式，不繼承列印樣式 */
+.admin-table td {
+    padding: 8px 10px; border-bottom: 1px solid #f1f1f1; color: #333;
+    display: table-cell !important; 
+    vertical-align: middle;
+}
+.admin-table tr:hover { background-color: #f8f9fa; }
+
+/* 狀態標籤 */
+.badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; display: inline-block; }
+.badge-valid { background: #e3fcef; color: #00b894; }
+.badge-expired { background: #ffecec; color: #d63031; }
+.badge-perm { background: #e3f2fd; color: #0984e3; }
+.row-expired td { color: #b2bec3; } 
+.row-expired .item-name { text-decoration: line-through; }
+
+.footer-actions {
+    max-width: 1200px; margin: 20px auto; padding: 0 20px;
+    display: flex; gap: 15px; justify-content: flex-end; align-items: center;
+}
+
+/* =========================================
+   4. 編輯彈窗 (Modal)
+   ========================================= */
+.modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
+}
+.modal-content {
+    background: white; padding: 25px; border-radius: 8px; width: 400px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.modal-header { font-size: 18px; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; color: #666; font-size: 14px; }
+.form-group input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+.modal-footer { margin-top: 25px; display: flex; justify-content: space-between; gap: 10px; }
+.modal-footer .right-btns { display: flex; gap: 10px; }
+
+/* =========================================
+   5. 列印與預覽樣式 (CSS Scope: .page & .data)
+   ========================================= */
+@media print {
+    .controls-wrapper, .footer-actions, .modal-overlay { display: none !important; }
+    .page { page-break-after: always; display: block !important; margin: 0 !important; box-shadow: none !important;}
+    body { background-color: white; }
+    .page-preview-wrapper { padding: 0; }
+}
+
+.page-preview-wrapper {
+    display: flex; flex-direction: column; align-items: center; gap: 20px; padding-bottom: 50px;
+}
+.page {
+    position:relative; width: 794px; height: 1123px;
+    font-family:'GenRyuMin2',serif; /* 列印字體 */
+    background: white; box-shadow: 0 0 15px rgba(0,0,0,0.1); margin: 0 auto;
+    display: block;
+}
 
 .container{position:relative;width:680px;margin:0 auto;height:100%;}
-
-/* ③ 控制面板 ---------------------------------------------------- */
-.controls{padding:8px 16px;background:#f7f7f7;border-radius:6px;
-           box-shadow:0 1px 4px rgba(0,0,0,.1);}
-.input-group{margin-bottom:12px;}
-.input-group label{font-size:16px;font-weight:bold;margin-bottom:4px;display:block;}
-.input-group textarea{width:100%;height:64px;font-size:18px;line-height:1.5;}
-.controls button{padding:6px 12px;font-size:16px;cursor:pointer;}
-/* Flex container for buttons */
-.button-group {
-    display: flex;
-    gap: 10px; /* Space between buttons */
-    margin-top: 15px;
-}
-/* Flex container for text area and load button */
-.textarea-with-button {
-    display: flex;
-    align-items: flex-end; /* Align button to bottom of textarea */
-    gap: 8px; /* Space between textarea and button */
-}
-.textarea-with-button textarea {
-    flex-grow: 1; /* Allow textarea to take available space */
-}
-@media print{.controls{display:none!important;}}
-
-/* ④ 頁眉 -------------------------------------------------------- */
 .header-left{position:absolute;top:50px;left:0;display:flex;align-items:center;}
 .header-left .logo{width:19px;margin-right:8px;}
 .header-left .temple-name{font-size:16px;letter-spacing:1px;}
+.list-title{position:absolute;top:30px;left:0;right:0;text-align:center;font-size:40px;letter-spacing:8px;}
+.date-label{position:absolute;top:57px;right:0;font-size:12px;}
 
-.list-title{position:absolute;top:30px;left:0;right:0;text-align:center;
-            font-size:40px;letter-spacing:8px;}
-
-.date-label{position:absolute;top:57px;right:0;font-size:12px;} /* This is for the header date */
-
-/* ⑤ frame + 說明欄 ---------------------------------------------- */
-:root{
-  --frame-top:100px;        /* 說明欄頂距 */
-  --sub-height:120px;       /* 100-120說明欄高    */
-}
+:root{ --frame-top:100px; --sub-height:120px; }
 .frame{
-  position:absolute;
-  top:var(--frame-top);
-  left:0;right:0;
-  bottom:110px;           /* 180-130預設留白 (Page1 用) */
-  border:2px solid #000;
-  display:flex;flex-direction:column;overflow:hidden;
+  position:absolute; top:var(--frame-top); left:0;right:0; bottom:110px;
+  border:2px solid #000; display:flex;flex-direction:column;overflow:hidden;
 }
-/* ★★★ 第二頁另行留更大底邊 & 說明欄更矮 */
-.page-wang  .frame{bottom:140px;}    /* ← 底留白加大 */
-.page-wang  .sub{flex:0 0 100px;}     /* ← 說明欄高度 80px */
-
-/* 說明欄 */
-.sub{
-  flex:0 0 var(--sub-height);
-  padding:0 8px;font-size:22px;text-align:center;
-  display:flex;align-items:center;justify-content:center;
-  line-height:1.4;
-}
-
-/* ⑥ 表格 -------------------------------------------------------- */
-.data{flex:1;display:grid;grid-template-columns:repeat(4,1fr);
-       grid-template-rows:repeat(15,1fr);}
-.page-wang .data{grid-template-rows:repeat(14,1fr);}    /* ★★★ Page2 14 列 */
-
+.page-wang .frame{bottom:140px;}
+.page-wang .sub{flex:0 0 100px;}
+.sub{ flex:0 0 var(--sub-height); padding:0 8px;font-size:22px;text-align:center; display:flex;align-items:center;justify-content:center; line-height:1.4; }
+.data{flex:1;display:grid;grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(15,1fr);}
+.page-wang .data{grid-template-rows:repeat(14,1fr);}
 .data table,.data tbody,.data tr{display:contents;}
-td{border:1px solid #000;display:flex;align-items:center;justify-content:center;
-   font-size:16px;font-family:'BpmfGenRyuMin','GenRyuMin2',serif;
-   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-   position: relative; /* KEEP: Needed for absolute positioning of date/hejiao */
-}
-/* td div holds the main name, should be centered */
-td div{
-    font-size:24px; /* Main name font size */
-    line-height:1; /* Keep main name compact */
-    white-space:nowrap; /* Prevent name from wrapping */
-    overflow:hidden;
-    text-overflow:ellipsis;
-    display: flex; /* Using flex to center content within itself */
-    align-items: center; /* Center horizontally */
-    justify-content: center; /* Center vertically */
-    height: 100%; /* Ensure div takes full height of td */
-    width: 100%; /* Ensure div takes full width of td */
-}
 
-.superscript{font-size:10px;vertical-align:super;}
-td:first-child{border-left:none;}td:last-child{border-right:none;}
-td:nth-last-child(-n+4){border-bottom:none;}
+/* ★★★ 這裡限制了列印表格的樣式，不會影響管理介面 ★★★ */
+.data td {
+    border:1px solid #000; display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-family:'BpmfGenRyuMin','GenRyuMin2',serif;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position: relative;
+}
+.data td div {
+    /* 名字容器 */
+    line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;
+}
+.data td:first-child{border-left:none;} .data td:last-child{border-right:none;}
+.data td:nth-last-child(-n+4){border-bottom:none;}
 
-/* Styles for "闔家" and Date - ABSOLUTE POSITIONING */
 .hejiao, .date-display {
-    position: absolute; /* BACK TO ABSOLUTE */
-    font-family: 'GenRyuMin2', serif;
-    line-height: 1; /* Ensure consistent line height for positioning */
-    z-index: 10; /* Ensure they are on top of the main name if overlapping */
-    font-size: 10px; /* Fixed default size as requested */
+    position: absolute; font-family: 'GenRyuMin2', serif; line-height: 1; z-index: 10; font-size: 10px;
 }
-.date-display {
-    top: 2px;   /* Fixed default top offset */
-    right: 2px; /* Fixed default right offset */
-}
-.hejiao {
-    bottom: 2px; /* Fixed default bottom offset */
-    right: 2px;  /* Fixed default right offset */
-}
+.date-display { top: 2px; right: 2px; }
+.hejiao { bottom: 2px; right: 2px; }
 
-
-/* ⑦ 頁腳 -------------------------------------------------------- */
-.footer-xiaozai,.footer-wang{
-  position:absolute;left:0px;right:0px;text-align:center;
-}
-.footer-xiaozai{bottom:10px;}        /* Page1 */
-.footer-wang  {bottom:10px;}        /* Page2 再靠下 20px */
-
+.footer-xiaozai,.footer-wang{ position:absolute;left:0px;right:0px;text-align:center; }
+.footer-xiaozai{bottom:10px;}
+.footer-wang {bottom:10px;}
 .blessing-x{font-size:22px;line-height:1.6;}
 .note-x{font-size:14px;margin-top:8px;display:inline-block;}
 .blessing-w{font-size:20px;line-height:1.6;}    
-.footer .three{font-size:10px;} /* 三稱小字 */
+.footer .three{font-size:10px;}
 </style>
 </head>
 <body>
 
-<div class="controls">
-  <div class="input-group">
-    <label for="bulk-xiaozai">消災者名單：</label>
-    <div class="textarea-with-button">
-      <textarea id="bulk-xiaozai" placeholder="請以逗號或換行分隔…&#10;範例：王小明闔家, 李大華+, 陳美玲, 林志玲 12/25"></textarea>
-      <button id="load-xiaozai" type="button">讀取</button>
-      <input type="file" id="file-input-xiaozai" accept=".txt,.csv" style="display: none;">
+<div id="edit-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">修改資料</div>
+        <div class="form-group">
+            <label>姓名</label>
+            <input type="text" id="edit-name-input">
+        </div>
+        <div class="form-group">
+            <label>日期 (留空為永久/無日期)</label>
+            <input type="date" id="edit-date-input">
+        </div>
+        <div class="form-group">
+            <label style="display:flex; align-items:center; cursor:pointer;">
+                <input type="checkbox" id="edit-hejiao-input" style="width:auto; margin-right:8px;"> 顯示「闔家」
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-danger" id="btn-modal-delete">刪除此筆</button>
+            <div class="right-btns">
+                <button class="btn btn-secondary" id="btn-modal-cancel">取消</button>
+                <button class="btn btn-success" id="btn-modal-save">儲存修改</button>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="input-group">
-    <label for="bulk-wangsheng">超薦者名單：</label>
-    <div class="textarea-with-button">
-      <textarea id="bulk-wangsheng" placeholder="請以逗號或換行分隔…"></textarea>
-      <button id="load-wangsheng" type="button">讀取</button>
-      <input type="file" id="file-input-wangsheng" accept=".txt,.csv" style="display: none;">
-    </div>
-  </div>
-  <div class="button-group">
-      <button id="generate">產生表格</button>
-      <button id="download-xiaozai">下載消災名單</button>
-      <button id="download-wangsheng">下載超薦名單</button>
-  </div>
 </div>
 
-<div class="page page-xiao">
-  <div class="container">
-    <div class="header-left">
-      <img class="logo" src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" alt="LOGO">
-      <div class="temple-name">淨土宗竹山念佛會</div>
-    </div>
-    <div class="list-title">消 災 者</div>
-    <div class="date-label" id="date-xiaozai"></div>
-
-    <div class="frame">
-      <div class="sub">
-        回向中華淨土宗協會四眾弟子<br>
-        今日與會大眾及眷屬　消災堂上一切消災者<br>
-        以及消災者：（念名單）
-      </div>
-      <div class="data"><table><tbody id="tbody-xiaozai"></tbody></table></div>
+<div class="controls-wrapper">
+    <div class="top-bar">
+        <div class="app-title">
+            <img src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" width="30" alt="">
+            回向名單管理系統
+        </div>
+        <div class="print-btn-group">
+            <button class="btn btn-print" onclick="window.print()">🖨️ 列印 / 預覽 PDF</button>
+        </div>
     </div>
 
-    <p class="footer footer-xiaozai">
-      <span class="blessing-x">業障消除　福慧增長　身心安樂　一切吉祥</span><br>
-      <span class="note-x">( 翻頁繼續 )</span>
-    </p>
-  </div>
+    <div class="controls-container">
+        <div class="panel">
+            <div class="panel-header">
+                <h3>消災名單管理 <span class="subtitle">(有效期：7天 / 無日期永久)</span></h3>
+                <button class="btn btn-warning btn-sm" id="btn-clean-xiaozai">清除過期</button>
+            </div>
+            <div class="input-area">
+                <div class="input-row">
+                    <textarea id="input-xiaozai" placeholder="輸入姓名 (多筆請用換行或逗號隔開)&#10;例：王小明, 李大華+"></textarea>
+                    <div class="date-picker-wrapper">
+                        <label>指定日期 (選填)</label>
+                        <input type="date" id="date-picker-x">
+                        <button class="btn btn-primary" id="btn-add-xiaozai" style="margin-top:auto; width:100%;">新增</button>
+                    </div>
+                </div>
+            </div>
+            <div class="list-view">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th width="40%">姓名</th>
+                            <th width="30%">日期</th>
+                            <th width="15%">狀態</th>
+                            <th width="15%">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list-xiaozai"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h3>超薦名單管理 <span class="subtitle">(有效期：49天)</span></h3>
+                <button class="btn btn-warning btn-sm" id="btn-clean-wangsheng">清除過期</button>
+            </div>
+            <div class="input-area">
+                <div class="input-row">
+                    <textarea id="input-wangsheng" placeholder="輸入姓名 (多筆請用換行或逗號隔開)&#10;例：林公祖父, 陳媽李氏"></textarea>
+                    <div class="date-picker-wrapper">
+                        <label>指定日期 (選填)</label>
+                        <input type="date" id="date-picker-w">
+                        <button class="btn btn-primary" id="btn-add-wangsheng" style="margin-top:auto; width:100%;">新增</button>
+                    </div>
+                </div>
+            </div>
+            <div class="list-view">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th width="40%">姓名</th>
+                            <th width="30%">日期</th>
+                            <th width="15%">狀態</th>
+                            <th width="15%">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list-wangsheng"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-actions">
+        <button class="btn btn-secondary" id="btn-download-txt-x">下載消災 TXT</button>
+        <button class="btn btn-secondary" id="btn-download-txt-w">下載超薦 TXT</button>
+        <span style="border-left:1px solid #ccc; height:20px;"></span>
+        <button class="btn btn-success" id="btn-backup">備份資料庫 (JSON)</button>
+        <button class="btn btn-danger" id="btn-restore">還原資料庫 (JSON)</button>
+        <input type="file" id="file-restore" accept=".json" style="display:none">
+    </div>
 </div>
 
-<div class="page page-wang">
-  <div class="container">
-    <div class="header-left">
-      <img class="logo" src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" alt="LOGO">
-      <div class="temple-name">淨土宗竹山念佛會</div>
-    </div>
-    <div class="list-title">超  薦  者</div>
-    <div class="date-label" id="date-wangsheng"></div>
-
-    <div class="frame">
-      <div class="sub">
-        再回向往生堂上眾等往生者<br>
-        以及往生者：（念名單）
+<div class="page-preview-wrapper">
+    <div class="page page-xiao">
+      <div class="container">
+        <div class="header-left">
+          <img class="logo" src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" alt="LOGO">
+          <div class="temple-name">淨土宗竹山念佛會</div>
+        </div>
+        <div class="list-title">消 災 者</div>
+        <div class="date-label" id="date-xiaozai"></div>
+        <div class="frame">
+          <div class="sub">
+            回向中華淨土宗協會四眾弟子<br>
+            今日與會大眾及眷屬　消災堂上一切消災者<br>
+            以及消災者：（念名單）
+          </div>
+          <div class="data"><table><tbody id="tbody-xiaozai"></tbody></table></div>
+        </div>
+        <p class="footer footer-xiaozai">
+          <span class="blessing-x">業障消除　福慧增長　身心安樂　一切吉祥</span><br>
+          <span class="note-x">( 翻頁繼續 )</span>
+        </p>
       </div>
-      <div class="data"><table><tbody id="tbody-wangsheng"></tbody></table></div>
     </div>
 
-    <p class="footer footer-wang">
-      <span class="blessing-w">
-        蒙佛接引　往生西方<br>
-        願以此功德　平等施一切　同發菩提心　往生安樂國<br>
-        南無阿彌陀佛 <span class="three">(三稱)</span>
-      </p>
-  </div>
+    <div class="page page-wang">
+      <div class="container">
+        <div class="header-left">
+          <img class="logo" src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" alt="LOGO">
+          <div class="temple-name">淨土宗竹山念佛會</div>
+        </div>
+        <div class="list-title">超  薦  者</div>
+        <div class="date-label" id="date-wangsheng"></div>
+        <div class="frame">
+          <div class="sub">
+            再回向往生堂上眾等往生者<br>
+            以及往生者：（念名單）
+          </div>
+          <div class="data"><table><tbody id="tbody-wangsheng"></tbody></table></div>
+        </div>
+        <p class="footer footer-wang">
+          <span class="blessing-w">
+            蒙佛接引　往生西方<br>
+            願以此功德　平等施一切　同發菩提心　往生安樂國<br>
+            南無阿彌陀佛 <span class="three">(三稱)</span>
+          </p>
+      </div>
+    </div>
 </div>
 
 <script>
+const STORAGE_KEY = 'temple_list_data';
+let db = { xiaozai: [], wangsheng: [] };
+let currentEditType = null;
+let currentEditId = null;
+
 document.addEventListener('DOMContentLoaded', () => {
+    // 預設日期選擇器為今天
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('date-picker-x').value = todayStr;
+    document.getElementById('date-picker-w').value = todayStr;
+    initApp();
+});
 
-  /* 建立表格 ------------------------------------------------------ */
-  function build(id, rows=15){          /* ★★★ 加 rows 參數 */
-    const tb=document.getElementById(id);
-    tb.innerHTML='';
-    for(let r=0;r<rows;r++){
-      const tr=document.createElement('tr');
-      for(let c=0;c<4;c++){
-        const td=document.createElement('td');
-        td.appendChild(document.createElement('div')); // Main div for the name
-        tr.appendChild(td);
-      }
-      tb.appendChild(tr);
+function initApp() {
+    loadFromStorage();
+    setupEventListeners();
+    updateUI(); 
+}
+
+// --- 資料存取 ---
+function loadFromStorage() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+        try { db = JSON.parse(raw); } catch (e) { console.error(e); }
     }
-  }
-  build('tbody-xiaozai');        /* 15 列 */
-  build('tbody-wangsheng',14);    /* 14 列 ★★★ */
+}
+function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    updateUI();
+}
+function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+function getTodayMidnight() {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
 
-  /* 今日日期 (頁眉部分) ------------------------------------------------------ */
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  // Set today's date to midnight for comparison
-  const today = new Date(currentYear, now.getMonth(), now.getDate());
+// --- 日期邏輯 ---
+function checkExpired(item, type) {
+    if (!item.parsedDateIso) return false; // 無日期=永久(消災)
+    const today = getTodayMidnight();
+    const entryDate = new Date(item.parsedDateIso);
+    let expireDate = new Date(entryDate);
+    // 規則: 消災+7天, 超薦+49天
+    expireDate.setDate(entryDate.getDate() + (type === 'xiaozai' ? 7 : 49));
+    return today > expireDate;
+}
 
-  const minguo=`${currentYear-1911}年${now.getMonth()+1}月${now.getDate()}日`;
-  document.getElementById('date-xiaozai').textContent=minguo;
-  document.getElementById('date-wangsheng').textContent=minguo; // Ensure 超薦者 header date is displayed
+function parseInput(text, type, defaultDateVal) {
+    const tokens = text.split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean);
+    const newItems = [];
+    const currentYear = new Date().getFullYear();
 
-  /* 筆畫排序 ------------------------------------------------------ */
-  const strokeCol=new Intl.Collator('zh-Hant-u-co-stroke');
+    tokens.forEach(t => {
+        let workingString = t;
+        let name = '';
+        let displayDate = null;
+        let parsedDateIso = null;
+        let isHeJiao = false;
+        let isNextYear = false;
 
-  /* 產生表格及下載功能共用變數 ------------------------------------ */
-  let displayedXiaozaiDataForDownload = []; 
-  let displayedWangshengDataForDownload = []; 
+        // 1. 偵測文字內是否包含 MM/DD
+        const dateRegexEnd = /(\d{1,2}[\/-]\d{1,2})\s*(\.?)$/;
+        const dateRegexStart = /^(\d{1,2}[\/-]\d{1,2})\s*(\.?)/;
+        let match;
 
-  /* 產生表格 ------------------------------------------------------ */
-  document.getElementById('generate').onclick=()=>{
-    const fixedFontSize = '10px'; 
-    
-    // Process 消災 and 超薦 lists
-    ['xiaozai','wangsheng'].forEach(type=>{ 
-      const rows=type==='xiaozai'?15:14;
-      const tokens=document.getElementById(`bulk-${type}`).value
-        .split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean);
-
-      const items = tokens.map(t => {
-          let originalString = t.trim(); 
-          let workingString = t.trim(); 
-          let name = '';
-          let displayDate = null;
-          let parsedDateObj = null;
-          let isHeJiao = false;
-          let isNextYear = false;
-
-          // --- Step 1: Attempt to extract Date (and optional next year marker) ---
-          // Define regex patterns for date at start and end, including optional '.'
-          // Date format: MM/DD or MM-DD followed by optional whitespace and an optional dot.
-          const dateRegexEnd = /(\d{1,2}[\/-]\d{1,2})\s*(\.?)$/; // Matches date and optional dot at the end
-          const dateRegexStart = /^(\d{1,2}[\/-]\d{1,2})\s*(\.?)/; // Matches date and optional dot at the start
-
-          let match;
-
-          // Try matching date pattern at the end of the string first
-          if ((match = workingString.match(dateRegexEnd))) {
-              const [fullMatch, datePart, dotPart] = match;
-              displayDate = datePart;
-              if (dotPart === '.') isNextYear = true;
-              workingString = workingString.replace(fullMatch, '').trim(); // Remove date part from working string
-          } 
-          // If not found at the end, try matching date pattern at the start of the string
-          else if ((match = workingString.match(dateRegexStart))) { 
-              const [fullMatch, datePart, dotPart] = match;
-              displayDate = datePart;
-              if (dotPart === '.') isNextYear = true;
-              workingString = workingString.replace(fullMatch, '').trim(); // Remove date part from working string
-          }
-
-          // Convert displayDate to actual Date object for comparison
-          if (displayDate) {
-              const [mm, dd] = displayDate.split(/[\/-]/).map(Number);
-              if (mm >= 1 && mm <= 12 && dd >= 1 && dd <= 31) {
-                  let dateYear = currentYear;
-                  if (isNextYear) {
-                      dateYear = currentYear + 1;
-                  }
-                  parsedDateObj = new Date(dateYear, mm - 1, dd);
-              } else {
-                  displayDate = null; // Invalid date format, reset
-                  parsedDateObj = null;
-              }
-          }
-
-          // --- Step 2: Extract HeJiao indicators ---
-          // Use a global regex to find and remove all occurrences of '闔家', '合家', or '+'
-          // This will ensure all these indicators are removed from the name and isHeJiao is set correctly.
-          const hejiaoRegex = /(闔家|合家|\+)/g;
-          let tempWorkingStringForHejiaoCheck = workingString; // Use a temp string for exec to work correctly
-          let hejiaoFound = false;
-          // Loop through matches to detect if any hejiao indicator is present
-          while (hejiaoRegex.exec(tempWorkingStringForHejiaoCheck) !== null) {
-              hejiaoFound = true; 
-          }
-
-          if (hejiaoFound) {
-              isHeJiao = true;
-              workingString = workingString.replace(hejiaoRegex, '').trim(); // Remove all found hejiao indicators
-          }
-          
-          // --- Step 3: What's left is the Name ---
-          name = workingString; 
-
-          // Determine if the item should be displayed in the TABLE (future date check)
-          let shouldDisplayInTable = true;
-          // If a date was successfully parsed AND it's today or in the past
-          if (parsedDateObj && parsedDateObj <= today) {
-              shouldDisplayInTable = false;
-          }
-
-          return {
-              raw: originalString, // Keep original input for reference
-              name: name, // Cleaned name
-              displayDate: displayDate, // Formatted date string (e.g., "7/31")
-              parsedDate: parsedDateObj, // Date object for comparison
-              isHeJiao: isHeJiao, // Boolean
-              shouldDisplayInTable: shouldDisplayInTable // For table filtering
-          };
-      })
-      .filter(item => item.shouldDisplayInTable); // Filter out items with past/today dates *before* sorting for TABLE display
-
-      // Sort items: 釋/法師 first, then by stroke count
-      const special = items.filter(x => x.name.startsWith('釋') || x.name.endsWith('法師'));
-      const rest = items.filter(x => !special.includes(x));
-      special.sort((a, b) => strokeCol.compare(a.name, b.name));
-      rest.sort((a, b) => strokeCol.compare(a.name, b.name));
-      const ordered = [...special, ...rest]; // This is the list of items to potentially display in table
-
-      // --- Render to table and prepare structured data for download ---
-      const currentDisplayedDataForDownload = []; 
-      const tds=[...document.querySelectorAll(`#tbody-${type} td`)];
-      tds.forEach(td=>{
-        td.innerHTML = ''; 
-        const mainNameDiv = document.createElement('div');
-        td.appendChild(mainNameDiv);
-      });
-
-      // Only render what fits in the current table (rows*4 cells)
-      ordered.slice(0,rows*4).forEach((it,i)=>{
-        const tdElement = tds[i]; 
-        const mainNameDiv = tdElement.firstChild; 
-
-        mainNameDiv.innerHTML = [...it.name].map(ch => 
-          /[\u4e00-\u9fff\u3105-\u3129]/.test(ch) ? ch : ''
-        ).join('');
-
-        let itemForDownload = {
-            name: it.name, 
-            displayDate: it.displayDate, 
-            isHeJiao: it.isHeJiao 
-        };
-
-        if (it.displayDate) { 
-            const dateSpan = document.createElement('span');
-            dateSpan.className = 'date-display'; 
-            dateSpan.textContent = it.displayDate; 
-            dateSpan.style.fontSize = fixedFontSize; 
-            tdElement.appendChild(dateSpan); 
+        if ((match = workingString.match(dateRegexEnd))) {
+            displayDate = match[1];
+            if (match[2] === '.') isNextYear = true;
+            workingString = workingString.replace(match[0], '').trim();
+        } else if ((match = workingString.match(dateRegexStart))) {
+            displayDate = match[1];
+            if (match[2] === '.') isNextYear = true;
+            workingString = workingString.replace(match[0], '').trim();
         }
 
-        if (type === 'xiaozai' && it.isHeJiao) {
-            const hejiaoSpan = document.createElement('span');
-            hejiaoSpan.className = 'hejiao';
-            hejiaoSpan.textContent = '闔家';
-            hejiaoSpan.style.fontSize = fixedFontSize; 
-            tdElement.appendChild(hejiaoSpan); 
+        // 2. 決定日期來源 (文字內的優先 > 日期選擇器 > 空)
+        if (!displayDate && defaultDateVal) {
+            const dObj = new Date(defaultDateVal);
+            displayDate = `${dObj.getMonth()+1}/${dObj.getDate()}`;
+            parsedDateIso = dObj.toISOString();
+        } else if (displayDate) {
+            const [mm, dd] = displayDate.split(/[\/-]/).map(Number);
+            let year = currentYear;
+            if (isNextYear) year++;
+            const dateObj = new Date(year, mm - 1, dd);
+            parsedDateIso = dateObj.toISOString();
+        }
+
+        // 3. 偵測闔家
+        const hejiaoRegex = /(闔家|合家|\+)/g;
+        if (hejiaoRegex.test(workingString)) {
+            isHeJiao = true;
+            workingString = workingString.replace(hejiaoRegex, '').trim();
+        }
+
+        name = workingString;
+        if (name) {
+            newItems.push({
+                id: generateId(),
+                name: name,
+                displayDate: displayDate,
+                parsedDateIso: parsedDateIso,
+                isHeJiao: isHeJiao
+            });
+        }
+    });
+    return newItems;
+}
+
+// --- UI 渲染 ---
+function updateUI() {
+    renderAdminList('xiaozai');
+    renderAdminList('wangsheng');
+    renderPrintTable('xiaozai');
+    renderPrintTable('wangsheng');
+
+    // 更新列印頁面的日期標頭
+    const now = new Date();
+    const dateStr = `${now.getFullYear()-1911}年${now.getMonth()+1}月${now.getDate()}日`;
+    document.getElementById('date-xiaozai').textContent = dateStr;
+    document.getElementById('date-wangsheng').textContent = dateStr;
+}
+
+// 管理列表 (橫向、乾淨)
+function renderAdminList(type) {
+    const tbody = document.getElementById(`list-${type}`);
+    tbody.innerHTML = '';
+    // 新增的顯示在最上方
+    const list = [...db[type]].reverse();
+
+    list.forEach(item => {
+        const isExpired = checkExpired(item, type);
+        const tr = document.createElement('tr');
+        if (isExpired) tr.classList.add('row-expired');
+
+        let badge = '';
+        if (isExpired) badge = `<span class="badge badge-expired">已過期</span>`;
+        else if (!item.parsedDateIso && type === 'xiaozai') badge = `<span class="badge badge-perm">永久</span>`;
+        else badge = `<span class="badge badge-valid">有效</span>`;
+
+        let displayName = `<span class="item-name">${item.name}</span>` + (item.isHeJiao ? ' <small style="color:#666">(闔家)</small>' : '');
+
+        tr.innerHTML = `
+            <td>${displayName}</td>
+            <td style="font-family:monospace">${item.displayDate || '--'}</td>
+            <td>${badge}</td>
+            <td><button class="btn btn-secondary btn-sm" onclick="openEditModal('${type}', '${item.id}')">修改</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// 列印表格 (直書、書法字、自動縮小字體)
+function renderPrintTable(type) {
+    const tbody = document.getElementById(`tbody-${type}`);
+    tbody.innerHTML = '';
+    
+    // 1. 取得有效名單並排序
+    const validItems = db[type].filter(item => !checkExpired(item, type));
+    const strokeCol = new Intl.Collator('zh-Hant-u-co-stroke');
+    const special = validItems.filter(x => x.name.startsWith('釋') || x.name.endsWith('法師'));
+    const rest = validItems.filter(x => !special.includes(x));
+    special.sort((a, b) => strokeCol.compare(a.name, b.name));
+    rest.sort((a, b) => strokeCol.compare(a.name, b.name));
+    const ordered = [...special, ...rest];
+
+    // 2. 建立空表格結構
+    const rows = (type === 'xiaozai') ? 15 : 14;
+    const totalCells = rows * 4;
+
+    for(let r=0; r<rows; r++) {
+        const tr = document.createElement('tr');
+        for(let c=0; c<4; c++) {
+            const td = document.createElement('td');
+            const div = document.createElement('div');
+            td.appendChild(div);
+            tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+    }
+
+    // 3. 填入資料
+    const tds = [...tbody.querySelectorAll('td')];
+    ordered.slice(0, totalCells).forEach((it, i) => {
+        const td = tds[i];
+        const div = td.querySelector('div');
+        
+        // 清除怪異字元方便計算長度
+        const cleanName = [...it.name].map(ch => /[\u4e00-\u9fff\u3105-\u3129a-zA-Z0-9]/.test(ch) ? ch : '').join('');
+        div.innerHTML = cleanName;
+
+        // --- ★★★ 自動縮小字體邏輯 ★★★ ---
+        const baseSize = 24; // 標準 4 字大小
+        const baseLen = 4;
+        const len = cleanName.length;
+
+        if (len > baseLen) {
+            let newSize = Math.floor((baseSize * baseLen) / len);
+            newSize = Math.max(newSize, 12); // 最小限制
+            div.style.fontSize = `${newSize}px`;
+        } else {
+            div.style.fontSize = `${baseSize}px`;
         }
         
-        if (mainNameDiv.textContent.trim() !== '' || it.displayDate !== null) { 
-             currentDisplayedDataForDownload.push(itemForDownload);
+        // 插入日期 (右上)
+        if (it.displayDate) {
+            const s = document.createElement('span'); s.className='date-display'; s.textContent=it.displayDate;
+            td.appendChild(s);
         }
-      });
-
-      if (type === 'xiaozai') {
-          displayedXiaozaiDataForDownload = currentDisplayedDataForDownload;
-      } else {
-          displayedWangshengDataForDownload = currentDisplayedDataForDownload;
-      }
+        // 插入闔家 (右下)
+        if (type === 'xiaozai' && it.isHeJiao) {
+            const s = document.createElement('span'); s.className='hejiao'; s.textContent='闔家';
+            td.appendChild(s);
+        }
     });
-  };
+}
 
-  /* 下載功能 ------------------------------------------------------ */
+// --- 編輯視窗邏輯 ---
+window.openEditModal = function(type, id) {
+    const item = db[type].find(i => i.id === id);
+    if (!item) return;
 
-  // Helper function to generate filename timestamp
-  function getTimestamp() {
-      const d = new Date();
-      const year = d.getFullYear();
-      const month = (d.getMonth() + 1).toString().padStart(2, '0');
-      const day = d.getDate().toString().padStart(2, '0');
-      const hours = d.getHours().toString().padStart(2, '0');
-      const minutes = d.getMinutes().toString().padStart(2, '0');
-      const seconds = d.getSeconds().toString().padStart(2, '0');
-      return `${year}${month}${day}${hours}${minutes}${seconds}`;
-  }
+    currentEditType = type;
+    currentEditId = id;
 
-  // Function to prepare data for download from the actual displayed data,
-  // now with an added filter for items *with* displayDate.
-  function prepareDownloadContent(items) {
-      const formattedItems = items
-          .filter(item => item.displayDate !== null) // Exclude items with no date for download
-          .map(item => {
-              let parts = [];
-              if (item.displayDate) {
-                  parts.push(item.displayDate); 
-              }
-              parts.push(item.name); 
-              if (item.isHeJiao) {
-                  parts.push('闔家'); 
-              }
-              return parts.join(''); 
-          });
-      return formattedItems.join(','); 
-  }
+    // 填入資料到輸入框
+    document.getElementById('edit-name-input').value = item.name;
+    document.getElementById('edit-hejiao-input').checked = item.isHeJiao;
+    
+    const dateInput = document.getElementById('edit-date-input');
+    if (item.parsedDateIso) {
+        dateInput.value = item.parsedDateIso.split('T')[0];
+    } else {
+        dateInput.value = '';
+    }
 
-  // Function to trigger file download
-  function downloadFile(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename; 
-      document.body.appendChild(a); 
-      a.click(); 
-      document.body.removeChild(a); 
-      URL.revokeObjectURL(url); 
-  }
+    document.getElementById('edit-modal').style.display = 'flex';
+};
 
-  // Event listener for 消災下載按鈕
-  document.getElementById('download-xiaozai').onclick = () => {
-      const content = prepareDownloadContent(displayedXiaozaiDataForDownload);
-      const filename = `消災名單${getTimestamp()}.txt`; 
-      downloadFile(filename, content);
-  };
+function closeEditModal() {
+    document.getElementById('edit-modal').style.display = 'none';
+    currentEditType = null;
+    currentEditId = null;
+}
 
-  // Event listener for 超薦下載按鈕
-  document.getElementById('download-wangsheng').onclick = () => {
-      const content = prepareDownloadContent(displayedWangshengDataForDownload);
-      const filename = `超薦名單${getTimestamp()}.txt`; 
-      downloadFile(filename, content);
-  };
+function saveEdit() {
+    if (!currentEditType || !currentEditId) return;
+    
+    const newName = document.getElementById('edit-name-input').value.trim();
+    if (!newName) { alert('姓名不能為空'); return; }
 
-  /* 讀取檔案功能 ------------------------------------------------------ */
+    const newDateVal = document.getElementById('edit-date-input').value;
+    const isHeJiao = document.getElementById('edit-hejiao-input').checked;
 
-  function setupFileReader(loadButtonId, fileInputId, textareaId) {
-    const loadButton = document.getElementById(loadButtonId);
-    const fileInput = document.getElementById(fileInputId);
-    const textarea = document.getElementById(textareaId);
+    let parsedDateIso = null;
+    let displayDate = null;
 
-    loadButton.addEventListener('click', () => {
-      fileInput.click(); // Trigger the hidden file input click
-    });
+    if (newDateVal) {
+        const dObj = new Date(newDateVal);
+        parsedDateIso = dObj.toISOString();
+        displayDate = `${dObj.getMonth()+1}/${dObj.getDate()}`;
+    }
 
-    fileInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          textarea.value = e.target.result; // Put file content into textarea
-          // Clear the file input's value to allow re-reading the same file
-          // (otherwise, 'change' event might not fire if same file is selected again)
-          event.target.value = ''; 
-          document.getElementById('generate').click(); // Automatically generate table after loading
+    // 更新 DB
+    const list = db[currentEditType];
+    const index = list.findIndex(i => i.id === currentEditId);
+    if (index !== -1) {
+        list[index].name = newName;
+        list[index].parsedDateIso = parsedDateIso;
+        list[index].displayDate = displayDate;
+        list[index].isHeJiao = isHeJiao;
+    }
+
+    saveToStorage();
+    closeEditModal();
+}
+
+function deleteCurrentEdit() {
+    if (!currentEditType || !currentEditId) return;
+    if(!confirm('確定刪除此筆資料？')) return;
+
+    db[currentEditType] = db[currentEditType].filter(item => item.id !== currentEditId);
+    saveToStorage();
+    closeEditModal();
+}
+
+// --- 事件監聽 ---
+function setupEventListeners() {
+    // 新增按鈕
+    const setupAdd = (type) => {
+        document.getElementById(`btn-add-${type}`).onclick = () => {
+            const input = document.getElementById(`input-${type}`);
+            const datePicker = document.getElementById(type === 'xiaozai' ? 'date-picker-x' : 'date-picker-w');
+            const items = parseInput(input.value, type, datePicker.value);
+            if (items.length > 0) {
+                db[type].push(...items);
+                input.value = ''; 
+                saveToStorage();
+            } else { alert('請輸入姓名'); }
         };
-        reader.onerror = (e) => {
-          console.error("Error reading file:", e.target.error);
-          alert("讀取檔案時發生錯誤。請確認檔案是否正確。");
-        };
-        // Read file as text, specify UTF-8 encoding
-        reader.readAsText(file, 'UTF-8'); 
-      }
+    };
+    setupAdd('xiaozai');
+    setupAdd('wangsheng');
+
+    // 清除過期
+    const setupClean = (type) => {
+        document.getElementById(`btn-clean-${type}`).onclick = () => {
+            if(!confirm(`確定清除過期名單？`)) return;
+            db[type] = db[type].filter(item => !checkExpired(item, type));
+            saveToStorage();
+        }
+    };
+    setupClean('xiaozai');
+    setupClean('wangsheng');
+
+    // Modal 按鈕
+    document.getElementById('btn-modal-cancel').onclick = closeEditModal;
+    document.getElementById('btn-modal-save').onclick = saveEdit;
+    document.getElementById('btn-modal-delete').onclick = deleteCurrentEdit;
+    
+    // 點擊 Modal 外部關閉
+    document.getElementById('edit-modal').onclick = (e) => {
+        if (e.target.id === 'edit-modal') closeEditModal();
+    };
+
+    // 下載與備份
+    document.getElementById('btn-download-txt-x').onclick = () => downloadTxt('xiaozai');
+    document.getElementById('btn-download-txt-w').onclick = () => downloadTxt('wangsheng');
+    document.getElementById('btn-backup').onclick = backupJson;
+    document.getElementById('btn-restore').onclick = () => document.getElementById('file-restore').click();
+    document.getElementById('file-restore').onchange = restoreJson;
+}
+
+// 檔案功能
+function downloadTxt(type) {
+    const validItems = db[type].filter(item => !checkExpired(item, type));
+    const lines = validItems.map(item => {
+        let parts = [];
+        if (item.displayDate) parts.push(item.displayDate);
+        parts.push(item.name);
+        if (item.isHeJiao && type === 'xiaozai') parts.push('闔家');
+        return parts.join('');
     });
-  }
+    downloadFile(`${type==='xiaozai'?'消災':'超薦'}_${getTimestamp()}.txt`, lines.join(','));
+}
+function backupJson() {
+    downloadFile(`Backup_${getTimestamp()}.json`, JSON.stringify(db, null, 2));
+}
+function restoreJson(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+        try {
+            const imported = JSON.parse(evt.target.result);
+            if(confirm('確定還原？目前的資料會被覆蓋')) { db = imported; saveToStorage(); }
+        } catch(err) { alert('檔案錯誤'); }
+        e.target.value = '';
+    };
+    reader.readAsText(file);
+}
+function downloadFile(name, content) {
+    const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function getTimestamp() { return new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 12); }
 
-  // Setup file readers for both 消災 and 超薦
-  setupFileReader('load-xiaozai', 'file-input-xiaozai', 'bulk-xiaozai');
-  setupFileReader('load-wangsheng', 'file-input-wangsheng', 'bulk-wangsheng');
-
-  document.getElementById('generate').click(); // Initial generation on load
-});
 </script>
 </body>
 </html>
