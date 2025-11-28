@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>淨土宗竹山念佛會 - 回向名單管理系統 (V3.0)</title>
+<title>淨土宗竹山念佛會 - 回向名單管理系統 (V4.4 置頂修正版)</title>
 
 <style>
 /* =========================================
-   1. 字型與全域設定
+   1. 字型設定
    ========================================= */
 @font-face{font-family:'GenRyuMin2';
   src:url('https://raw.githubusercontent.com/mt3722/TableMaker/main/GenRyuMin2TW-B.woff2') format('woff2'),
@@ -16,13 +16,18 @@
   src:url('https://raw.githubusercontent.com/mt3722/TableMaker/main/BpmfGenRyuMin-B.woff2') format('woff2'),
        url('https://raw.githubusercontent.com/mt3722/TableMaker/main/BpmfGenRyuMin-B.woff')  format('woff');}
 
-@page{size:A4 portrait;margin:0;}
+/* =========================================
+   2. 全域設定
+   ========================================= */
+@page { size: A4 portrait; margin: 0; }
+@page landscape-page { size: A4 landscape; margin: 0; }
+
 html,body{margin:0;width:100%;height:100%;}
 body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-color: #f4f6f9; }
 *{box-sizing:border-box;}
 
 /* =========================================
-   2. 管理控制面板
+   3. 管理控制面板
    ========================================= */
 .controls-wrapper {
     background: #fff; padding: 20px;
@@ -71,7 +76,6 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 .date-picker-wrapper label { font-size: 12px; color: #666; }
 .date-picker-wrapper input[type="date"] { padding: 6px; border: 1px solid #ced4da; border-radius: 4px; }
 
-/* 按鈕樣式 */
 .btn { padding: 5px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.2s; white-space: nowrap;}
 .btn-sm { padding: 4px 8px; font-size: 12px; }
 .btn-primary { background: #0984e3; color: white; } .btn-primary:hover { background: #0070d6; }
@@ -81,13 +85,11 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 .btn-success { background: #00b894; color: white; } .btn-success:hover { background: #00896c; }
 .btn-info { background: #17a2b8; color: white; } .btn-info:hover { background: #138496; }
 
-/* 管理列表表格 */
 .list-view { flex: 1; overflow-y: auto; background: #fff; }
 .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
 .admin-table th {
     position: sticky; top: 0; background: #dfe6e9; color: #2d3436;
-    padding: 8px 5px; text-align: left; font-weight: 600; z-index: 2; border-bottom: 2px solid #ccc;
-    white-space: nowrap;
+    padding: 8px 5px; text-align: left; font-weight: 600; z-index: 2; border-bottom: 2px solid #ccc; white-space: nowrap;
 }
 .admin-table td {
     padding: 8px 5px; border-bottom: 1px solid #f1f1f1; color: #333;
@@ -95,7 +97,6 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 }
 .admin-table tr:hover { background-color: #f8f9fa; }
 
-/* 狀態標籤 */
 .badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; display: inline-block; text-align: center; min-width: 40px;}
 .badge-valid { background: #e3fcef; color: #00b894; border: 1px solid #00b894; }
 .badge-expired { background: #ffecec; color: #d63031; border: 1px solid #d63031; }
@@ -103,7 +104,6 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 .row-expired td { color: #b2bec3; } 
 .row-expired .item-name { text-decoration: line-through; }
 
-/* 底部功能區 */
 .footer-actions {
     max-width: 1300px; margin: 20px auto; padding: 0 20px;
     display: flex; gap: 10px; justify-content: flex-end; align-items: center; flex-wrap: wrap;
@@ -113,54 +113,39 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 }
 
 /* =========================================
-   3. 編輯彈窗 (Modal)
+   4. 編輯彈窗
    ========================================= */
-.modal-overlay {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
-}
-.modal-content {
-    background: white; padding: 25px; border-radius: 8px; width: 450px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+.modal-content { background: white; padding: 25px; border-radius: 8px; width: 450px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;}
 .form-group { margin-bottom: 15px; }
 .form-group label { display: block; margin-bottom: 5px; color: #333; font-weight: bold; font-size: 14px; }
 .form-group input[type="text"], .form-group input[type="date"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
-
 .expiry-options { background: #f0f7ff; padding: 10px; border-radius: 6px; border: 1px solid #cce5ff; margin-top: 15px; }
 .radio-group { display: flex; gap: 15px; margin-bottom: 10px; flex-wrap: wrap;}
 .radio-label { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 14px; }
-
 .modal-footer { margin-top: 25px; display: flex; justify-content: space-between; gap: 10px; }
 
 /* =========================================
-   4. 列印與預覽設定 (修復空白頁)
+   5. 列印與預覽設定
    ========================================= */
 @media print {
     .controls-wrapper, .footer-actions, .modal-overlay { display: none !important; }
+    .page-preview-wrapper { display: block !important; padding: 0 !important; margin: 0 !important; }
     
-    /* 確保容器不佔額外空間 */
-    .page-preview-wrapper { 
-        display: block !important; 
-        padding: 0 !important; 
-        margin: 0 !important; 
-    }
-    
-    /* 每一頁基本的強制分頁 */
     .page { 
-        page-break-after: always; 
         display: block !important; 
         margin: 0 !important; 
         box-shadow: none !important; 
-        /* 確保從頂部開始 */
         position: relative !important;
         top: 0 !important;
     }
 
-    /* ★★★ 關鍵修復：最後一頁 (超薦) 不要分頁 ★★★ */
-    .page-wang { 
-        page-break-after: auto !important; 
+    .page-xiao { page-break-after: always; }
+    .page-wang { page-break-after: always; }
+    .page-horizontal { 
+        page-break-after: auto; 
+        page: landscape-page; 
     }
 
     body { background-color: white; margin: 0; padding: 0; }
@@ -169,8 +154,10 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 .page-preview-wrapper {
     display: flex; flex-direction: column; align-items: center; gap: 20px; padding-bottom: 50px;
 }
-.page {
-    position:relative; width: 794px; height: 1123px;
+
+/* 直式頁面 (Page 1 & 2) */
+.page-xiao, .page-wang {
+    position:relative; width: 794px; height: 1123px; /* A4 Portrait */
     font-family:'GenRyuMin2',serif; 
     background: white; box-shadow: 0 0 15px rgba(0,0,0,0.1); margin: 0 auto;
     display: block;
@@ -220,6 +207,97 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
 .note-x{font-size:14px;margin-top:8px;display:inline-block;}
 .blessing-w{font-size:20px;line-height:1.6;}    
 .footer .three{font-size:10px;}
+
+
+/* =========================================
+   6. 橫式頁面專用樣式 (Page 3) - V4.4 置頂修正版
+   ========================================= */
+.page-horizontal {
+    position: relative;
+    width: 29.7cm; height: 21cm; /* A4 Landscape */
+    background: white;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1); margin: 0 auto;
+    font-family:'GenRyuMin2';
+}
+
+.page-horizontal .h-container {
+    position: relative; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    justify-content: space-between; 
+    padding: 20px 0;
+}
+
+.page-horizontal .header-group {
+    display: flex; align-items: center; justify-content: center;
+    position: relative; margin-top: 10px; gap: 15px;
+}
+.page-horizontal .header-group h1 {
+    font-size: 28px; letter-spacing: 2px; font-weight: normal; 
+    font-family:'GenRyuMin2'; margin: 0; padding: 0;
+}
+.page-horizontal .header-group .logo { width: 1.0cm; height: auto; }
+
+.page-horizontal .date-label {
+    position: absolute; top: 1.3cm; right: 1.2cm;
+    font-size: 12px; letter-spacing: 1px; font-family:'GenRyuMin2';
+}
+
+.page-horizontal .table-container {
+    width: 26.4cm;
+    margin: auto;
+}
+
+.page-horizontal table {
+    table-layout: fixed; width: 100%;
+    border-collapse: separate; border-spacing: 0;
+}
+.page-horizontal th, .page-horizontal td {
+    width: 1.32cm; padding: 0;
+    border: 0.5px solid #000;
+    text-align: center; vertical-align: middle;
+}
+
+/* 高度調整 */
+.page-horizontal tr:nth-child(1) td,
+.page-horizontal tr:nth-child(3) td,
+.page-horizontal tr:nth-child(5) td { height:0.84cm; }
+
+.page-horizontal tr:nth-child(2) td,
+.page-horizontal tr:nth-child(4) td,
+.page-horizontal tr:nth-child(6) td { height:4.50cm; }
+
+/* 日期樣式 */
+.page-horizontal .cell-date-display {
+    width: 100%; height: 100%;
+    display:flex; justify-content:center; align-items:center;
+    font-size:16px; font-family:'GenRyuMin2';
+}
+
+/* ★★★ 名字樣式 (修正為置頂) ★★★ */
+.page-horizontal .cell-name-display {
+    width: 100%; height: 100%;
+    padding: 0; margin: 0;
+    
+    font-family:'BpmfGenRyuMin', 'GenRyuMin2';
+    font-size: 24px; 
+    letter-spacing: 2px;
+    
+    writing-mode: vertical-rl; text-orientation: upright;
+    
+    /* 關鍵排版修正 */
+    display: flex; 
+    align-items: center; /* 水平居中 (相對於直書軸線) */
+    justify-content: flex-start; /* 垂直靠上 (直書的主軸起始點) */
+    padding-top: 15px; /* 增加頂部留白，避免字體貼邊 */
+    
+    white-space: nowrap; 
+}
+
+.page-horizontal .footer {
+    text-align: center; font-size: 24px; letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
 </style>
 </head>
 <body>
@@ -405,6 +483,23 @@ body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-col
           </p>
       </div>
     </div>
+
+    <div class="page page-horizontal">
+        <div class="h-container">
+            <div class="date-label" id="date-horizontal"></div>
+            
+            <div class="header-group">
+                <img src="https://github.com/mt3722/TableMaker/blob/main/121203.png?raw=true" class="logo" alt="Logo">
+                <h1>淨土宗竹山念佛會</h1>
+            </div>
+            
+            <div class="table-container">
+                <table><tbody id="tbody-horizontal"></tbody></table>
+            </div>
+
+            <p class="footer">願以此功德　平等施一切　同發菩提心　往生安樂國</p>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -507,10 +602,13 @@ function updateUI() {
     renderAdminList('wangsheng');
     renderPrintTable('xiaozai');
     renderPrintTable('wangsheng');
+    renderHorizontalTable();
+
     const now = new Date();
     const dateStr = `${now.getFullYear()-1911}年${now.getMonth()+1}月${now.getDate()}日`;
     document.getElementById('date-xiaozai').textContent = dateStr;
     document.getElementById('date-wangsheng').textContent = dateStr;
+    document.getElementById('date-horizontal').textContent = dateStr;
 }
 
 function renderAdminList(type) {
@@ -612,6 +710,66 @@ function renderPrintTable(type) {
     });
 }
 
+function renderHorizontalTable() {
+    const tbody = document.getElementById('tbody-horizontal');
+    tbody.innerHTML = '';
+
+    const type = 'wangsheng';
+    const validItems = db[type].filter(item => !checkExpired(item, type));
+    
+    const strokeCol = new Intl.Collator('zh-Hant-u-co-stroke');
+    const special = validItems.filter(x => x.name.startsWith('釋') || x.name.endsWith('法師'));
+    const rest = validItems.filter(x => !special.includes(x));
+    special.sort((a, b) => strokeCol.compare(a.name, b.name));
+    rest.sort((a, b) => strokeCol.compare(a.name, b.name));
+    const ordered = [...special, ...rest];
+
+    [0.84,4.50,0.84,4.50,0.84,4.50].forEach(h => {
+        const tr = document.createElement('tr');
+        tr.style.height = h + 'cm';
+        for (let i = 0; i < 20; i++) {
+            const td = document.createElement('td');
+            if (h === 0.84) {
+                 const div = document.createElement('div');
+                 div.className = 'cell-date-display';
+                 td.appendChild(div);
+            } else {
+                 const div = document.createElement('div');
+                 div.className = 'cell-name-display';
+                 td.appendChild(div);
+            }
+            tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+    });
+
+    ordered.slice(0, 60).forEach((item, k) => {
+        const dp = k < 20 ? k : (k < 40 ? k + 20 : k + 40); 
+        const dr = Math.floor(dp / 20);
+        const dc = dp % 20;
+
+        const np = k < 20 ? 20 + k : (k < 40 ? 40 + k : 60 + k); 
+        const nr = Math.floor(np / 20);
+        const nc = np % 20;
+
+        const dateDiv = tbody.children[dr].children[dc].querySelector('.cell-date-display');
+        if (dateDiv && item.displayDate) {
+            dateDiv.textContent = item.displayDate;
+        }
+
+        const nameDiv = tbody.children[nr].children[nc].querySelector('.cell-name-display');
+        if (nameDiv) {
+            const cleanName = [...item.name].map(ch => /[\u4e00-\u9fff\u3105-\u3129a-zA-Z0-9]/.test(ch) ? ch : '').join('');
+            nameDiv.textContent = cleanName;
+            
+            // ★★★ 設定為固定縮小字體與字距 (24px / 2px) ★★★
+            nameDiv.style.fontSize = '24px';
+            nameDiv.style.letterSpacing = '2px'; 
+        }
+    });
+}
+
+
 window.openEditModal = function(type, id) {
     const item = db[type].find(i => i.id === id);
     if (!item) return;
@@ -626,7 +784,7 @@ window.openEditModal = function(type, id) {
     const defaultDays = (type === 'xiaozai') ? 7 : 49;
     
     radioContainer.innerHTML = `
-        <label class="radio-label"><input type="radio" name="duration-opt" value="default" checked> ${defaultDays}天</label>
+        <label class="radio-label"><input type="radio" name="duration-opt" value="default" checked> 預設 (${defaultDays}天)</label>
         <label class="radio-label"><input type="radio" name="duration-opt" value="perm"> 永久</label>
         <label class="radio-label"><input type="radio" name="duration-opt" value="custom"> 自訂</label>
     `;
@@ -775,7 +933,6 @@ function setupEventListeners() {
                 saveToStorage();
             }
         };
-        // ★★★ 清空所有按鈕的監聽 ★★★
         document.getElementById(`btn-reset-${type}`).onclick = () => {
             if(confirm(`【嚴重警告】\n您確定要「清空」所有${type==='xiaozai'?'消災':'超薦'}資料嗎？\n此動作無法復原！`)) {
                 if(confirm('請再次確認：真的要全部刪除嗎？')) {
