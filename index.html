@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>淨土宗竹山念佛會 - 回向名單管理系統 (最終完整版)</title>
+<title>淨土宗竹山念佛會 - 回向名單管理系統 (V3.0)</title>
 
 <style>
 /* =========================================
-   1. 字型設定 (僅用於列印區塊)
+   1. 字型與全域設定
    ========================================= */
 @font-face{font-family:'GenRyuMin2';
   src:url('https://raw.githubusercontent.com/mt3722/TableMaker/main/GenRyuMin2TW-B.woff2') format('woff2'),
@@ -16,32 +16,22 @@
   src:url('https://raw.githubusercontent.com/mt3722/TableMaker/main/BpmfGenRyuMin-B.woff2') format('woff2'),
        url('https://raw.githubusercontent.com/mt3722/TableMaker/main/BpmfGenRyuMin-B.woff')  format('woff');}
 
-/* =========================================
-   2. 全域基礎設定
-   ========================================= */
 @page{size:A4 portrait;margin:0;}
 html,body{margin:0;width:100%;height:100%;}
-body { 
-    font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; /* 管理介面預設字體 */
-    background-color: #f4f6f9; 
-}
+body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-color: #f4f6f9; }
 *{box-sizing:border-box;}
 
 /* =========================================
-   3. 管理控制面板樣式 (CSS Scope: .controls-wrapper)
+   2. 管理控制面板
    ========================================= */
 .controls-wrapper {
-    background: #fff;
-    padding: 20px;
+    background: #fff; padding: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-bottom: 4px solid #8b5a2b; /* 佛教色系裝飾線 */
-    position: relative; 
-    z-index: 10; /* 確保浮在預覽層之上 */
-    margin-bottom: 20px;
+    border-bottom: 4px solid #8b5a2b;
+    position: relative; z-index: 10; margin-bottom: 20px;
 }
-
 .top-bar {
-    max-width: 1200px; margin: 0 auto 20px;
+    max-width: 1300px; margin: 0 auto 20px;
     display: flex; justify-content: space-between; align-items: center;
 }
 .app-title { font-size: 24px; font-weight: bold; color: #333; display: flex; align-items: center; gap: 10px; }
@@ -54,13 +44,13 @@ body {
 .btn-print:hover { background-color: #5b4cc4; transform: translateY(-1px); }
 
 .controls-container {
-    max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 25px;
+    max-width: 1300px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
 }
 
 .panel {
     background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
-    overflow: hidden; display: flex; flex-direction: column; height: 600px;
+    overflow: hidden; display: flex; flex-direction: column; height: 700px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 .panel-header {
@@ -69,6 +59,7 @@ body {
 }
 .panel-header h3 { margin: 0; font-size: 18px; color: #2c3e50; }
 .panel-header .subtitle { font-size: 12px; color: #666; font-weight: normal; margin-left: 5px;}
+.header-btns { display: flex; gap: 8px; }
 
 .input-area { padding: 15px; background: #fff; border-bottom: 1px solid #eee; }
 .input-row { display: flex; gap: 10px; margin-bottom: 5px; }
@@ -81,68 +72,98 @@ body {
 .date-picker-wrapper input[type="date"] { padding: 6px; border: 1px solid #ced4da; border-radius: 4px; }
 
 /* 按鈕樣式 */
-.btn { padding: 6px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; transition: 0.2s; }
-.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn { padding: 5px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.2s; white-space: nowrap;}
+.btn-sm { padding: 4px 8px; font-size: 12px; }
 .btn-primary { background: #0984e3; color: white; } .btn-primary:hover { background: #0070d6; }
 .btn-warning { background: #fdcb6e; color: #333; } .btn-warning:hover { background: #e1b12c; }
 .btn-danger { background: #d63031; color: white; } .btn-danger:hover { background: #c02828; }
 .btn-secondary { background: #b2bec3; color: white; } .btn-secondary:hover { background: #636e72; }
 .btn-success { background: #00b894; color: white; } .btn-success:hover { background: #00896c; }
+.btn-info { background: #17a2b8; color: white; } .btn-info:hover { background: #138496; }
 
-/* 管理列表樣式 (橫向表格) */
+/* 管理列表表格 */
 .list-view { flex: 1; overflow-y: auto; background: #fff; }
-.admin-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
 .admin-table th {
     position: sticky; top: 0; background: #dfe6e9; color: #2d3436;
-    padding: 10px; text-align: left; font-weight: 600; z-index: 2; border-bottom: 2px solid #ccc;
+    padding: 8px 5px; text-align: left; font-weight: 600; z-index: 2; border-bottom: 2px solid #ccc;
+    white-space: nowrap;
 }
-/* 強制管理表格為一般樣式，不繼承列印樣式 */
 .admin-table td {
-    padding: 8px 10px; border-bottom: 1px solid #f1f1f1; color: #333;
-    display: table-cell !important; 
-    vertical-align: middle;
+    padding: 8px 5px; border-bottom: 1px solid #f1f1f1; color: #333;
+    vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .admin-table tr:hover { background-color: #f8f9fa; }
 
 /* 狀態標籤 */
-.badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; display: inline-block; }
-.badge-valid { background: #e3fcef; color: #00b894; }
-.badge-expired { background: #ffecec; color: #d63031; }
-.badge-perm { background: #e3f2fd; color: #0984e3; }
+.badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; display: inline-block; text-align: center; min-width: 40px;}
+.badge-valid { background: #e3fcef; color: #00b894; border: 1px solid #00b894; }
+.badge-expired { background: #ffecec; color: #d63031; border: 1px solid #d63031; }
+.badge-perm { background: #e3f2fd; color: #0984e3; border: 1px solid #0984e3; }
 .row-expired td { color: #b2bec3; } 
 .row-expired .item-name { text-decoration: line-through; }
 
+/* 底部功能區 */
 .footer-actions {
-    max-width: 1200px; margin: 20px auto; padding: 0 20px;
-    display: flex; gap: 15px; justify-content: flex-end; align-items: center;
+    max-width: 1300px; margin: 20px auto; padding: 0 20px;
+    display: flex; gap: 10px; justify-content: flex-end; align-items: center; flex-wrap: wrap;
+}
+.action-group {
+    display: flex; gap: 5px; padding: 5px 10px; border: 1px solid #ddd; border-radius: 6px; background: #f9f9f9;
 }
 
 /* =========================================
-   4. 編輯彈窗 (Modal)
+   3. 編輯彈窗 (Modal)
    ========================================= */
 .modal-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
 }
 .modal-content {
-    background: white; padding: 25px; border-radius: 8px; width: 400px;
+    background: white; padding: 25px; border-radius: 8px; width: 450px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;}
 .form-group { margin-bottom: 15px; }
-.form-group label { display: block; margin-bottom: 5px; color: #666; font-size: 14px; }
-.form-group input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+.form-group label { display: block; margin-bottom: 5px; color: #333; font-weight: bold; font-size: 14px; }
+.form-group input[type="text"], .form-group input[type="date"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+
+.expiry-options { background: #f0f7ff; padding: 10px; border-radius: 6px; border: 1px solid #cce5ff; margin-top: 15px; }
+.radio-group { display: flex; gap: 15px; margin-bottom: 10px; flex-wrap: wrap;}
+.radio-label { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 14px; }
+
 .modal-footer { margin-top: 25px; display: flex; justify-content: space-between; gap: 10px; }
-.modal-footer .right-btns { display: flex; gap: 10px; }
 
 /* =========================================
-   5. 列印與預覽樣式 (CSS Scope: .page & .data)
+   4. 列印與預覽設定 (修復空白頁)
    ========================================= */
 @media print {
     .controls-wrapper, .footer-actions, .modal-overlay { display: none !important; }
-    .page { page-break-after: always; display: block !important; margin: 0 !important; box-shadow: none !important;}
-    body { background-color: white; }
-    .page-preview-wrapper { padding: 0; }
+    
+    /* 確保容器不佔額外空間 */
+    .page-preview-wrapper { 
+        display: block !important; 
+        padding: 0 !important; 
+        margin: 0 !important; 
+    }
+    
+    /* 每一頁基本的強制分頁 */
+    .page { 
+        page-break-after: always; 
+        display: block !important; 
+        margin: 0 !important; 
+        box-shadow: none !important; 
+        /* 確保從頂部開始 */
+        position: relative !important;
+        top: 0 !important;
+    }
+
+    /* ★★★ 關鍵修復：最後一頁 (超薦) 不要分頁 ★★★ */
+    .page-wang { 
+        page-break-after: auto !important; 
+    }
+
+    body { background-color: white; margin: 0; padding: 0; }
 }
 
 .page-preview-wrapper {
@@ -150,7 +171,7 @@ body {
 }
 .page {
     position:relative; width: 794px; height: 1123px;
-    font-family:'GenRyuMin2',serif; /* 列印字體 */
+    font-family:'GenRyuMin2',serif; 
     background: white; box-shadow: 0 0 15px rgba(0,0,0,0.1); margin: 0 auto;
     display: block;
 }
@@ -174,14 +195,12 @@ body {
 .page-wang .data{grid-template-rows:repeat(14,1fr);}
 .data table,.data tbody,.data tr{display:contents;}
 
-/* ★★★ 這裡限制了列印表格的樣式，不會影響管理介面 ★★★ */
 .data td {
     border:1px solid #000; display:flex; align-items:center; justify-content:center;
     font-size:16px; font-family:'BpmfGenRyuMin','GenRyuMin2',serif;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position: relative;
 }
 .data td div {
-    /* 名字容器 */
     line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;
 }
@@ -207,16 +226,24 @@ body {
 
 <div id="edit-modal" class="modal-overlay">
     <div class="modal-content">
-        <div class="modal-header">修改資料</div>
+        <div class="modal-header">修改資料 <span id="modal-type-title" style="font-size:14px; color:#666; font-weight:normal;"></span></div>
         <div class="form-group">
             <label>姓名</label>
             <input type="text" id="edit-name-input">
         </div>
         <div class="form-group">
-            <label>日期 (留空為永久/無日期)</label>
+            <label>起始日期</label>
             <input type="date" id="edit-date-input">
         </div>
-        <div class="form-group">
+        <div class="expiry-options">
+            <label style="font-weight:bold; margin-bottom:5px; display:block;">有效期設定</label>
+            <div class="radio-group" id="radio-container"></div>
+            <div id="custom-date-row" style="display:none; margin-top:5px;">
+                <label style="font-size:12px;">截止日期：</label>
+                <input type="date" id="edit-expiry-input">
+            </div>
+        </div>
+        <div class="form-group" style="margin-top:15px;">
             <label style="display:flex; align-items:center; cursor:pointer;">
                 <input type="checkbox" id="edit-hejiao-input" style="width:auto; margin-right:8px;"> 顯示「闔家」
             </label>
@@ -245,14 +272,17 @@ body {
     <div class="controls-container">
         <div class="panel">
             <div class="panel-header">
-                <h3>消災名單管理 <span class="subtitle">(有效期：7天 / 無日期永久)</span></h3>
-                <button class="btn btn-warning btn-sm" id="btn-clean-xiaozai">清除過期</button>
+                <h3>消災名單 <span class="subtitle">預設 7 天</span></h3>
+                <div class="header-btns">
+                    <button class="btn btn-warning btn-sm" id="btn-clean-xiaozai">清除過期</button>
+                    <button class="btn btn-danger btn-sm" id="btn-reset-xiaozai">清空所有</button>
+                </div>
             </div>
             <div class="input-area">
                 <div class="input-row">
-                    <textarea id="input-xiaozai" placeholder="輸入姓名 (多筆請用換行或逗號隔開)&#10;例：王小明, 李大華+"></textarea>
+                    <textarea id="input-xiaozai" placeholder="輸入姓名 (多筆請用換行或逗號隔開)"></textarea>
                     <div class="date-picker-wrapper">
-                        <label>指定日期 (選填)</label>
+                        <label>起始日期</label>
                         <input type="date" id="date-picker-x">
                         <button class="btn btn-primary" id="btn-add-xiaozai" style="margin-top:auto; width:100%;">新增</button>
                     </div>
@@ -262,8 +292,9 @@ body {
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th width="40%">姓名</th>
-                            <th width="30%">日期</th>
+                            <th width="30%">姓名</th>
+                            <th width="20%">起始</th>
+                            <th width="20%">結束</th>
                             <th width="15%">狀態</th>
                             <th width="15%">操作</th>
                         </tr>
@@ -275,14 +306,17 @@ body {
 
         <div class="panel">
             <div class="panel-header">
-                <h3>超薦名單管理 <span class="subtitle">(有效期：49天)</span></h3>
-                <button class="btn btn-warning btn-sm" id="btn-clean-wangsheng">清除過期</button>
+                <h3>超薦名單 <span class="subtitle">預設 49 天</span></h3>
+                <div class="header-btns">
+                    <button class="btn btn-warning btn-sm" id="btn-clean-wangsheng">清除過期</button>
+                    <button class="btn btn-danger btn-sm" id="btn-reset-wangsheng">清空所有</button>
+                </div>
             </div>
             <div class="input-area">
                 <div class="input-row">
-                    <textarea id="input-wangsheng" placeholder="輸入姓名 (多筆請用換行或逗號隔開)&#10;例：林公祖父, 陳媽李氏"></textarea>
+                    <textarea id="input-wangsheng" placeholder="輸入姓名 (多筆請用換行或逗號隔開)"></textarea>
                     <div class="date-picker-wrapper">
-                        <label>指定日期 (選填)</label>
+                        <label>起始日期</label>
                         <input type="date" id="date-picker-w">
                         <button class="btn btn-primary" id="btn-add-wangsheng" style="margin-top:auto; width:100%;">新增</button>
                     </div>
@@ -292,8 +326,9 @@ body {
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th width="40%">姓名</th>
-                            <th width="30%">日期</th>
+                            <th width="30%">姓名</th>
+                            <th width="20%">起始</th>
+                            <th width="20%">結束</th>
                             <th width="15%">狀態</th>
                             <th width="15%">操作</th>
                         </tr>
@@ -305,12 +340,21 @@ body {
     </div>
 
     <div class="footer-actions">
-        <button class="btn btn-secondary" id="btn-download-txt-x">下載消災 TXT</button>
-        <button class="btn btn-secondary" id="btn-download-txt-w">下載超薦 TXT</button>
-        <span style="border-left:1px solid #ccc; height:20px;"></span>
-        <button class="btn btn-success" id="btn-backup">備份資料庫 (JSON)</button>
-        <button class="btn btn-danger" id="btn-restore">還原資料庫 (JSON)</button>
-        <input type="file" id="file-restore" accept=".json" style="display:none">
+        <div class="action-group">
+            <button class="btn btn-secondary" id="btn-download-txt-x">下載消災TXT</button>
+            <button class="btn btn-info" onclick="document.getElementById('import-txt-x').click()">匯入消災TXT</button>
+            <input type="file" id="import-txt-x" accept=".txt,.csv" style="display:none">
+        </div>
+        <div class="action-group">
+            <button class="btn btn-secondary" id="btn-download-txt-w">下載超薦TXT</button>
+            <button class="btn btn-info" onclick="document.getElementById('import-txt-w').click()">匯入超薦TXT</button>
+            <input type="file" id="import-txt-w" accept=".txt,.csv" style="display:none">
+        </div>
+        <div class="action-group" style="background:#e8f5e9; border-color:#c8e6c9;">
+            <button class="btn btn-success" id="btn-backup">備份資料庫(JSON)</button>
+            <button class="btn btn-danger" id="btn-restore">還原資料庫(JSON)</button>
+            <input type="file" id="file-restore" accept=".json" style="display:none">
+        </div>
     </div>
 </div>
 
@@ -364,13 +408,12 @@ body {
 </div>
 
 <script>
-const STORAGE_KEY = 'temple_list_data';
+const STORAGE_KEY = 'temple_list_data_v2';
 let db = { xiaozai: [], wangsheng: [] };
 let currentEditType = null;
 let currentEditId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 預設日期選擇器為今天
     const todayStr = new Date().toISOString().split('T')[0];
     document.getElementById('date-picker-x').value = todayStr;
     document.getElementById('date-picker-w').value = todayStr;
@@ -383,34 +426,26 @@ function initApp() {
     updateUI(); 
 }
 
-// --- 資料存取 ---
-function loadFromStorage() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-        try { db = JSON.parse(raw); } catch (e) { console.error(e); }
-    }
-}
-function saveToStorage() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-    updateUI();
-}
-function generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
-function getTodayMidnight() {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
+function getTodayMidnight() { const now = new Date(); return new Date(now.getFullYear(), now.getMonth(), now.getDate()); }
+
+function getExpiryDate(item, type) {
+    if (item.isPermanent) return null;
+    if (item.manualExpiryIso) return new Date(item.manualExpiryIso);
+
+    const start = new Date(item.parsedDateIso);
+    const defaultDays = (type === 'xiaozai') ? 7 : 49;
+    const days = item.durationDays || defaultDays;
+    const exp = new Date(start);
+    exp.setDate(start.getDate() + days);
+    return exp;
 }
 
-// --- 日期邏輯 ---
 function checkExpired(item, type) {
-    if (!item.parsedDateIso) return false; // 無日期=永久(消災)
+    const expDate = getExpiryDate(item, type);
+    if (expDate === null) return false;
     const today = getTodayMidnight();
-    const entryDate = new Date(item.parsedDateIso);
-    let expireDate = new Date(entryDate);
-    // 規則: 消災+7天, 超薦+49天
-    expireDate.setDate(entryDate.getDate() + (type === 'xiaozai' ? 7 : 49));
-    return today > expireDate;
+    return today > expDate;
 }
 
 function parseInput(text, type, defaultDateVal) {
@@ -420,28 +455,19 @@ function parseInput(text, type, defaultDateVal) {
 
     tokens.forEach(t => {
         let workingString = t;
-        let name = '';
         let displayDate = null;
         let parsedDateIso = null;
         let isHeJiao = false;
         let isNextYear = false;
 
-        // 1. 偵測文字內是否包含 MM/DD
-        const dateRegexEnd = /(\d{1,2}[\/-]\d{1,2})\s*(\.?)$/;
-        const dateRegexStart = /^(\d{1,2}[\/-]\d{1,2})\s*(\.?)/;
-        let match;
-
-        if ((match = workingString.match(dateRegexEnd))) {
-            displayDate = match[1];
-            if (match[2] === '.') isNextYear = true;
-            workingString = workingString.replace(match[0], '').trim();
-        } else if ((match = workingString.match(dateRegexStart))) {
+        const dateRegex = /(\d{1,2}[\/-]\d{1,2})\s*(\.?)/;
+        const match = workingString.match(dateRegex);
+        if (match) {
             displayDate = match[1];
             if (match[2] === '.') isNextYear = true;
             workingString = workingString.replace(match[0], '').trim();
         }
 
-        // 2. 決定日期來源 (文字內的優先 > 日期選擇器 > 空)
         if (!displayDate && defaultDateVal) {
             const dObj = new Date(defaultDateVal);
             displayDate = `${dObj.getMonth()+1}/${dObj.getDate()}`;
@@ -454,46 +480,42 @@ function parseInput(text, type, defaultDateVal) {
             parsedDateIso = dateObj.toISOString();
         }
 
-        // 3. 偵測闔家
         const hejiaoRegex = /(闔家|合家|\+)/g;
         if (hejiaoRegex.test(workingString)) {
             isHeJiao = true;
             workingString = workingString.replace(hejiaoRegex, '').trim();
         }
 
-        name = workingString;
-        if (name) {
+        if (workingString) {
             newItems.push({
                 id: generateId(),
-                name: name,
+                name: workingString,
                 displayDate: displayDate,
                 parsedDateIso: parsedDateIso,
-                isHeJiao: isHeJiao
+                isHeJiao: isHeJiao,
+                durationDays: (type === 'xiaozai' ? 7 : 49),
+                isPermanent: false,
+                manualExpiryIso: null
             });
         }
     });
     return newItems;
 }
 
-// --- UI 渲染 ---
 function updateUI() {
     renderAdminList('xiaozai');
     renderAdminList('wangsheng');
     renderPrintTable('xiaozai');
     renderPrintTable('wangsheng');
-
-    // 更新列印頁面的日期標頭
     const now = new Date();
     const dateStr = `${now.getFullYear()-1911}年${now.getMonth()+1}月${now.getDate()}日`;
     document.getElementById('date-xiaozai').textContent = dateStr;
     document.getElementById('date-wangsheng').textContent = dateStr;
 }
 
-// 管理列表 (橫向、乾淨)
 function renderAdminList(type) {
     const tbody = document.getElementById(`list-${type}`);
     tbody.innerHTML = '';
-    // 新增的顯示在最上方
     const list = [...db[type]].reverse();
 
     list.forEach(item => {
@@ -501,30 +523,43 @@ function renderAdminList(type) {
         const tr = document.createElement('tr');
         if (isExpired) tr.classList.add('row-expired');
 
-        let badge = '';
-        if (isExpired) badge = `<span class="badge badge-expired">已過期</span>`;
-        else if (!item.parsedDateIso && type === 'xiaozai') badge = `<span class="badge badge-perm">永久</span>`;
-        else badge = `<span class="badge badge-valid">有效</span>`;
+        let statusBadge = '';
+        let endDateStr = '--';
+
+        if (item.isPermanent) {
+            statusBadge = '<span class="badge badge-perm">永久</span>';
+            endDateStr = '∞';
+        } else {
+            const exp = getExpiryDate(item, type);
+            if (exp) {
+                endDateStr = `${exp.getMonth()+1}/${exp.getDate()}`;
+                statusBadge = isExpired 
+                    ? '<span class="badge badge-expired">過期</span>' 
+                    : '<span class="badge badge-valid">有效</span>';
+            } else {
+                statusBadge = '<span class="badge badge-expired">無效</span>';
+            }
+        }
 
         let displayName = `<span class="item-name">${item.name}</span>` + (item.isHeJiao ? ' <small style="color:#666">(闔家)</small>' : '');
+        let startDateStr = item.displayDate || '--';
 
         tr.innerHTML = `
             <td>${displayName}</td>
-            <td style="font-family:monospace">${item.displayDate || '--'}</td>
-            <td>${badge}</td>
+            <td>${startDateStr}</td>
+            <td>${endDateStr}</td>
+            <td>${statusBadge}</td>
             <td><button class="btn btn-secondary btn-sm" onclick="openEditModal('${type}', '${item.id}')">修改</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-// 列印表格 (直書、書法字、自動縮小字體)
 function renderPrintTable(type) {
     const tbody = document.getElementById(`tbody-${type}`);
     tbody.innerHTML = '';
-    
-    // 1. 取得有效名單並排序
     const validItems = db[type].filter(item => !checkExpired(item, type));
+    
     const strokeCol = new Intl.Collator('zh-Hant-u-co-stroke');
     const special = validItems.filter(x => x.name.startsWith('釋') || x.name.endsWith('法師'));
     const rest = validItems.filter(x => !special.includes(x));
@@ -532,7 +567,6 @@ function renderPrintTable(type) {
     rest.sort((a, b) => strokeCol.compare(a.name, b.name));
     const ordered = [...special, ...rest];
 
-    // 2. 建立空表格結構
     const rows = (type === 'xiaozai') ? 15 : 14;
     const totalCells = rows * 4;
 
@@ -547,35 +581,30 @@ function renderPrintTable(type) {
         tbody.appendChild(tr);
     }
 
-    // 3. 填入資料
     const tds = [...tbody.querySelectorAll('td')];
     ordered.slice(0, totalCells).forEach((it, i) => {
         const td = tds[i];
         const div = td.querySelector('div');
-        
-        // 清除怪異字元方便計算長度
         const cleanName = [...it.name].map(ch => /[\u4e00-\u9fff\u3105-\u3129a-zA-Z0-9]/.test(ch) ? ch : '').join('');
         div.innerHTML = cleanName;
 
-        // --- ★★★ 自動縮小字體邏輯 ★★★ ---
-        const baseSize = 24; // 標準 4 字大小
-        const baseLen = 4;
-        const len = cleanName.length;
-
+        const baseSize = 24; const baseLen = 4; const len = cleanName.length;
         if (len > baseLen) {
             let newSize = Math.floor((baseSize * baseLen) / len);
-            newSize = Math.max(newSize, 12); // 最小限制
+            newSize = Math.max(newSize, 12);
             div.style.fontSize = `${newSize}px`;
         } else {
             div.style.fontSize = `${baseSize}px`;
         }
         
-        // 插入日期 (右上)
-        if (it.displayDate) {
-            const s = document.createElement('span'); s.className='date-display'; s.textContent=it.displayDate;
-            td.appendChild(s);
+        if (!it.isPermanent) {
+            const exp = getExpiryDate(it, type);
+            if (exp) {
+                const dateStr = `${exp.getMonth()+1}/${exp.getDate()}`;
+                const s = document.createElement('span'); s.className='date-display'; s.textContent=dateStr;
+                td.appendChild(s);
+            }
         }
-        // 插入闔家 (右下)
         if (type === 'xiaozai' && it.isHeJiao) {
             const s = document.createElement('span'); s.className='hejiao'; s.textContent='闔家';
             td.appendChild(s);
@@ -583,123 +612,114 @@ function renderPrintTable(type) {
     });
 }
 
-// --- 編輯視窗邏輯 ---
 window.openEditModal = function(type, id) {
     const item = db[type].find(i => i.id === id);
     if (!item) return;
-
     currentEditType = type;
     currentEditId = id;
 
-    // 填入資料到輸入框
     document.getElementById('edit-name-input').value = item.name;
     document.getElementById('edit-hejiao-input').checked = item.isHeJiao;
+    document.getElementById('edit-date-input').value = item.parsedDateIso ? item.parsedDateIso.split('T')[0] : '';
+
+    const radioContainer = document.getElementById('radio-container');
+    const defaultDays = (type === 'xiaozai') ? 7 : 49;
     
-    const dateInput = document.getElementById('edit-date-input');
-    if (item.parsedDateIso) {
-        dateInput.value = item.parsedDateIso.split('T')[0];
+    radioContainer.innerHTML = `
+        <label class="radio-label"><input type="radio" name="duration-opt" value="default" checked> ${defaultDays}天</label>
+        <label class="radio-label"><input type="radio" name="duration-opt" value="perm"> 永久</label>
+        <label class="radio-label"><input type="radio" name="duration-opt" value="custom"> 自訂</label>
+    `;
+
+    const radios = document.getElementsByName('duration-opt');
+    const customRow = document.getElementById('custom-date-row');
+    const customInput = document.getElementById('edit-expiry-input');
+    customRow.style.display = 'none';
+
+    if (item.isPermanent) {
+        radios[1].checked = true;
+    } else if (item.manualExpiryIso) {
+        radios[2].checked = true;
+        customRow.style.display = 'block';
+        customInput.value = item.manualExpiryIso.split('T')[0];
     } else {
-        dateInput.value = '';
+        radios[0].checked = true;
     }
 
+    radios.forEach(r => {
+        r.addEventListener('change', (e) => {
+            customRow.style.display = (e.target.value === 'custom') ? 'block' : 'none';
+        });
+    });
+
+    document.getElementById('modal-type-title').textContent = (type==='xiaozai'?'(消災)':'(超薦)');
     document.getElementById('edit-modal').style.display = 'flex';
 };
 
-function closeEditModal() {
-    document.getElementById('edit-modal').style.display = 'none';
-    currentEditType = null;
-    currentEditId = null;
-}
-
 function saveEdit() {
     if (!currentEditType || !currentEditId) return;
+    const item = db[currentEditType].find(i => i.id === currentEditId);
     
     const newName = document.getElementById('edit-name-input').value.trim();
     if (!newName) { alert('姓名不能為空'); return; }
-
-    const newDateVal = document.getElementById('edit-date-input').value;
-    const isHeJiao = document.getElementById('edit-hejiao-input').checked;
-
-    let parsedDateIso = null;
-    let displayDate = null;
-
-    if (newDateVal) {
-        const dObj = new Date(newDateVal);
-        parsedDateIso = dObj.toISOString();
-        displayDate = `${dObj.getMonth()+1}/${dObj.getDate()}`;
+    item.name = newName;
+    item.isHeJiao = document.getElementById('edit-hejiao-input').checked;
+    
+    const newStartDate = document.getElementById('edit-date-input').value;
+    if (newStartDate) {
+        const d = new Date(newStartDate);
+        item.parsedDateIso = d.toISOString();
+        item.displayDate = `${d.getMonth()+1}/${d.getDate()}`;
     }
 
-    // 更新 DB
-    const list = db[currentEditType];
-    const index = list.findIndex(i => i.id === currentEditId);
-    if (index !== -1) {
-        list[index].name = newName;
-        list[index].parsedDateIso = parsedDateIso;
-        list[index].displayDate = displayDate;
-        list[index].isHeJiao = isHeJiao;
+    const mode = document.querySelector('input[name="duration-opt"]:checked').value;
+    const defaultDays = (currentEditType === 'xiaozai') ? 7 : 49;
+
+    if (mode === 'perm') {
+        item.isPermanent = true;
+        item.manualExpiryIso = null;
+        item.durationDays = 0;
+    } else if (mode === 'custom') {
+        const dateVal = document.getElementById('edit-expiry-input').value;
+        if (!dateVal) { alert('請選擇截止日期'); return; }
+        item.isPermanent = false;
+        item.manualExpiryIso = new Date(dateVal).toISOString();
+        item.durationDays = 0;
+    } else {
+        item.isPermanent = false;
+        item.manualExpiryIso = null;
+        item.durationDays = defaultDays;
     }
 
     saveToStorage();
-    closeEditModal();
+    document.getElementById('edit-modal').style.display = 'none';
 }
 
 function deleteCurrentEdit() {
-    if (!currentEditType || !currentEditId) return;
     if(!confirm('確定刪除此筆資料？')) return;
-
     db[currentEditType] = db[currentEditType].filter(item => item.id !== currentEditId);
     saveToStorage();
-    closeEditModal();
+    document.getElementById('edit-modal').style.display = 'none';
 }
 
-// --- 事件監聽 ---
-function setupEventListeners() {
-    // 新增按鈕
-    const setupAdd = (type) => {
-        document.getElementById(`btn-add-${type}`).onclick = () => {
-            const input = document.getElementById(`input-${type}`);
-            const datePicker = document.getElementById(type === 'xiaozai' ? 'date-picker-x' : 'date-picker-w');
-            const items = parseInput(input.value, type, datePicker.value);
-            if (items.length > 0) {
-                db[type].push(...items);
-                input.value = ''; 
-                saveToStorage();
-            } else { alert('請輸入姓名'); }
-        };
-    };
-    setupAdd('xiaozai');
-    setupAdd('wangsheng');
-
-    // 清除過期
-    const setupClean = (type) => {
-        document.getElementById(`btn-clean-${type}`).onclick = () => {
-            if(!confirm(`確定清除過期名單？`)) return;
-            db[type] = db[type].filter(item => !checkExpired(item, type));
+function handleImportTxt(e, type) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+        const text = evt.target.result;
+        const defaultDate = new Date().toISOString().split('T')[0];
+        const newItems = parseInput(text, type, defaultDate);
+        if (newItems.length > 0) {
+            db[type].push(...newItems);
             saveToStorage();
-        }
+            alert(`成功匯入 ${newItems.length} 筆資料`);
+        } else { alert('無法解析資料'); }
+        e.target.value = '';
     };
-    setupClean('xiaozai');
-    setupClean('wangsheng');
-
-    // Modal 按鈕
-    document.getElementById('btn-modal-cancel').onclick = closeEditModal;
-    document.getElementById('btn-modal-save').onclick = saveEdit;
-    document.getElementById('btn-modal-delete').onclick = deleteCurrentEdit;
-    
-    // 點擊 Modal 外部關閉
-    document.getElementById('edit-modal').onclick = (e) => {
-        if (e.target.id === 'edit-modal') closeEditModal();
-    };
-
-    // 下載與備份
-    document.getElementById('btn-download-txt-x').onclick = () => downloadTxt('xiaozai');
-    document.getElementById('btn-download-txt-w').onclick = () => downloadTxt('wangsheng');
-    document.getElementById('btn-backup').onclick = backupJson;
-    document.getElementById('btn-restore').onclick = () => document.getElementById('file-restore').click();
-    document.getElementById('file-restore').onchange = restoreJson;
+    reader.readAsText(file);
 }
 
-// 檔案功能
 function downloadTxt(type) {
     const validItems = db[type].filter(item => !checkExpired(item, type));
     const lines = validItems.map(item => {
@@ -711,18 +731,24 @@ function downloadTxt(type) {
     });
     downloadFile(`${type==='xiaozai'?'消災':'超薦'}_${getTimestamp()}.txt`, lines.join(','));
 }
-function backupJson() {
-    downloadFile(`Backup_${getTimestamp()}.json`, JSON.stringify(db, null, 2));
+
+function loadFromStorage() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) { try { db = JSON.parse(raw); } catch (e) { console.error(e); } }
 }
+function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    updateUI();
+}
+function backupJson() { downloadFile(`Backup_${getTimestamp()}.json`, JSON.stringify(db, null, 2)); }
 function restoreJson(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = (evt) => {
         try {
             const imported = JSON.parse(evt.target.result);
-            if(confirm('確定還原？目前的資料會被覆蓋')) { db = imported; saveToStorage(); }
-        } catch(err) { alert('檔案錯誤'); }
+            if(confirm('確定還原？現有資料將被覆蓋')) { db = imported; saveToStorage(); }
+        } catch(err) { alert('JSON 格式錯誤'); }
         e.target.value = '';
     };
     reader.readAsText(file);
@@ -734,6 +760,44 @@ function downloadFile(name, content) {
 }
 function getTimestamp() { return new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 12); }
 
+function setupEventListeners() {
+    ['xiaozai', 'wangsheng'].forEach(type => {
+        document.getElementById(`btn-add-${type}`).onclick = () => {
+            const input = document.getElementById(`input-${type}`);
+            const datePicker = document.getElementById(type === 'xiaozai' ? 'date-picker-x' : 'date-picker-w');
+            const items = parseInput(input.value, type, datePicker.value);
+            if (items.length > 0) { db[type].push(...items); input.value = ''; saveToStorage(); } 
+            else { alert('請輸入姓名'); }
+        };
+        document.getElementById(`btn-clean-${type}`).onclick = () => {
+            if(confirm(`確定清除過期名單？`)) {
+                db[type] = db[type].filter(item => !checkExpired(item, type));
+                saveToStorage();
+            }
+        };
+        // ★★★ 清空所有按鈕的監聽 ★★★
+        document.getElementById(`btn-reset-${type}`).onclick = () => {
+            if(confirm(`【嚴重警告】\n您確定要「清空」所有${type==='xiaozai'?'消災':'超薦'}資料嗎？\n此動作無法復原！`)) {
+                if(confirm('請再次確認：真的要全部刪除嗎？')) {
+                    db[type] = [];
+                    saveToStorage();
+                    alert('已清空所有資料。');
+                }
+            }
+        };
+        document.getElementById(`btn-download-txt-${type[0]}`).onclick = () => downloadTxt(type);
+    });
+
+    document.getElementById('import-txt-x').onchange = (e) => handleImportTxt(e, 'xiaozai');
+    document.getElementById('import-txt-w').onchange = (e) => handleImportTxt(e, 'wangsheng');
+    document.getElementById('btn-modal-cancel').onclick = () => document.getElementById('edit-modal').style.display = 'none';
+    document.getElementById('btn-modal-save').onclick = saveEdit;
+    document.getElementById('btn-modal-delete').onclick = deleteCurrentEdit;
+    document.getElementById('edit-modal').onclick = (e) => { if(e.target.id === 'edit-modal') document.getElementById('edit-modal').style.display = 'none'; };
+    document.getElementById('btn-backup').onclick = backupJson;
+    document.getElementById('btn-restore').onclick = () => document.getElementById('file-restore').click();
+    document.getElementById('file-restore').onchange = restoreJson;
+}
 </script>
 </body>
 </html>
